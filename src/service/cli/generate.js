@@ -1,14 +1,18 @@
 "use strict";
 
 const fs = require(`fs`).promises;
+const path = require(`path`);
 const chalk = require(`chalk`);
 const { getRandomInt, shuffle, getRandomDate } = require(`./utils`);
 const { ExitCode } = require(`../../constants`);
 const DEFAULT_COUNT = 1;
-const FILE_NAME = `mocks.json`;
-const FILE_ANNOUNCES_PATH = `../../data/announces.txt`;
-const FILE_TITLES_PATH = `../../data/titles.txt`;
-const FILE_CATEGORIES_PATH = `../../data/categories.txt`;
+
+const MockFile = {
+  FILE_NAME: path.resolve(`cli`, `mocks.json`),
+  FILE_ANNOUNCES_PATH: path.resolve(`data`, `announces.txt`),
+  FILE_TITLES_PATH: path.resolve(`data`, `titles.txt`),
+  FILE_CATEGORIES_PATH: path.resolve(`data`, `categories.txt`),
+};
 
 const readContent = async (filePath) => {
   try {
@@ -36,21 +40,25 @@ const generatePublication = (count, titles, categories, announces) => {
 module.exports = {
   name: `--generate`,
   async run(args) {
-    const announces = await readContent(FILE_ANNOUNCES_PATH);
-    const titles = await readContent(FILE_TITLES_PATH);
-    const categories = await readContent(FILE_CATEGORIES_PATH);
+    const mocksContent = await Promise.all([
+      readContent(MockFile.FILE_ANNOUNCES_PATH),
+      readContent(MockFile.FILE_TITLES_PATH),
+      readContent(MockFile.FILE_CATEGORIES_PATH),
+    ]);
+
     const [count] = args;
     if (count > 1000) {
       console.error(chalk.red(`Не больше 1000 объявлений`));
       process.exit(ExitCode.ERROR);
     }
+
     const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
     const content = JSON.stringify(
-      generatePublication(countOffer, titles, categories, announces)
+      generatePublication(countOffer, ...mocksContent)
     );
 
     try {
-      await fs.writeFile(FILE_NAME, content);
+      await fs.writeFile(MockFile.FILE_NAME, content);
       console.info(chalk.green(`Operation success. File created.`));
       process.exit(ExitCode.SUCCESS);
     } catch (err) {
