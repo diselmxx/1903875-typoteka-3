@@ -41,9 +41,9 @@ module.exports = {
   name: `--generate`,
   async run(args) {
     const mocksContent = await Promise.all([
-      readContent(MockFile.FILE_ANNOUNCES_PATH),
       readContent(MockFile.FILE_TITLES_PATH),
       readContent(MockFile.FILE_CATEGORIES_PATH),
+      readContent(MockFile.FILE_ANNOUNCES_PATH),
     ]);
 
     const [count] = args;
