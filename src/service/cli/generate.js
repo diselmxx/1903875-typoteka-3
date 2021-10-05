@@ -1,18 +1,10 @@
 "use strict";
 
 const fs = require(`fs`).promises;
-const path = require(`path`);
+
 const chalk = require(`chalk`);
 const { getRandomInt, shuffle, getRandomDate } = require(`./utils`);
-const { ExitCode } = require(`../../constants`);
-const DEFAULT_COUNT = 1;
-
-const MockFile = {
-  NAME: path.resolve(__dirname, `../../../mocks.json`),
-  ANNOUNCES_PATH: path.resolve(__dirname, `../data/announces.txt`),
-  TITLES_PATH: path.resolve(__dirname, `../data/titles.txt`),
-  CATEGORIES_PATH: path.resolve(__dirname, `../data/categories.txt`),
-};
+const { ExitCode, MockFile, DEFAULT_COUNT } = require(`../../constants`);
 
 const readContent = async (filePath) => {
   try {
