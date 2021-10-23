@@ -1,5 +1,18 @@
 "use strict";
 
+const fs = require(`fs`).promises;
+const { MockFile } = require(`../../constants`);
+
+const getFileContent = async (req, res) => {
+  try {
+    const fileContent = await await fs.readFile(MockFile.NAME);
+    const mocks = JSON.parse(fileContent);
+    res.json(mocks);
+  } catch (_err) {
+    res.send([]);
+  }
+};
+
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -39,5 +52,6 @@ const shuffle = (someArray) => {
 module.exports = {
   getRandomInt,
   getRandomDate,
+  getFileContent,
   shuffle,
 };
