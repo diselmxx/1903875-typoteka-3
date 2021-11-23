@@ -1,10 +1,17 @@
 "use strict";
 
 const fs = require(`fs`).promises;
+const { nanoid } = require(`nanoid`);
 
 const chalk = require(`chalk`);
 const { getRandomInt, shuffle, getRandomDate } = require(`./utils`);
-const { ExitCode, MockFile, DEFAULT_COUNT } = require(`../../constants`);
+const {
+  ExitCode,
+  MockFile,
+  DEFAULT_COUNT,
+  MAX_ID_LENGTH,
+  MAX_COMMENTS,
+} = require(`../../constants`);
 
 const readContent = async (filePath) => {
   try {
@@ -16,18 +23,34 @@ const readContent = async (filePath) => {
   }
 };
 
-const generatePublication = (count, titles, categories, announces) => {
+const generatePublication = (
+  count,
+  titles,
+  categories,
+  announces,
+  comments
+) => {
   const randomSentencesNumber = getRandomInt(1, announces.length - 1);
   return Array(count)
     .fill({})
     .map(() => ({
+      id: nanoid(MAX_ID_LENGTH),
       title: titles[getRandomInt(0, titles.length - 1)],
       createdDate: getRandomDate(),
       announce: shuffle(announces).slice(1, 5).join(` `),
       fullText: shuffle(announces).slice(1, randomSentencesNumber).join(` `),
       category: [categories[getRandomInt(0, categories.length - 1)]],
+      comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments),
     }));
 };
+
+const generateComments = (count, comments) =>
+  Array(count)
+    .fill({})
+    .map(() => ({
+      id: nanoid(MAX_ID_LENGTH),
+      text: shuffle(comments).slice(0, getRandomInt(1, 3)).join(` `),
+    }));
 
 module.exports = {
   name: `--generate`,
@@ -36,6 +59,7 @@ module.exports = {
       readContent(MockFile.TITLES_PATH),
       readContent(MockFile.CATEGORIES_PATH),
       readContent(MockFile.ANNOUNCES_PATH),
+      readContent(MockFile.COMMENTS_PATH),
     ]);
 
     const [count] = args;
