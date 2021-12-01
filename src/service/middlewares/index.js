@@ -2,10 +2,10 @@
 
 const articleExist = require(`./articleExist`);
 const commentExist = require(`./commentExist`);
-const articleValidator = require(`./articleValidator`);
+const objectValidator = require(`./objectValidator`);
 
 module.exports = {
   articleExist,
-  articleValidator,
+  objectValidator,
   commentExist,
 };

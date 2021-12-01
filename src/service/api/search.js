@@ -13,8 +13,8 @@ module.exports = (app, mockData) => {
     const result = mockData.filter((e) => e.title.includes(query));
     if (result.length === 0) {
       return res
-        .status(HttpCode.NOT_FOUND)
-        .send(`По запросу "${query}" ниечего не найдено`);
+        .status(HttpCode.OK)
+        .send(`По запросу "${query}" ничего не найдено`);
     }
     return res.status(HttpCode.OK).send(result);
   });

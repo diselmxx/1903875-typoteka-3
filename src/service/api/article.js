@@ -3,15 +3,17 @@
 const { Router } = require(`express`);
 const { HttpCode } = require(`../../constants`);
 const {
-  articleValidator,
+  objectValidator,
   articleExist,
   commentExist,
 } = require(`../middlewares/`);
-const commentValidator = require(`../middlewares/commentValidator`);
 
-const route = new Router();
+const articleKeys = [`title`, `announce`, `fullText`, `category`];
+const commentKeys = [`text`];
 
 module.exports = (app, ArticleService, CommentService) => {
+  const route = new Router();
+
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
@@ -38,11 +40,13 @@ module.exports = (app, ArticleService, CommentService) => {
   route.post(
     `/:articleId/comments`,
     articleExist(ArticleService),
-    commentValidator,
+    objectValidator(commentKeys),
     async (req, res) => {
       const { article } = res.locals;
-      CommentService.create(req.body, article);
-      return res.status(HttpCode.OK).json(`Комментарий добавлен`);
+      const newComment = CommentService.create(req.body, article);
+      return res
+        .status(HttpCode.CREATED)
+        .json({ id: newComment.id, text: newComment.text });
     }
   );
 
@@ -58,7 +62,7 @@ module.exports = (app, ArticleService, CommentService) => {
     }
   );
 
-  route.post(`/`, articleValidator, async (req, res) => {
+  route.post(`/`, objectValidator(articleKeys), async (req, res) => {
     const article = ArticleService.create(req.body);
 
     return res.status(HttpCode.CREATED).json(article);
@@ -66,11 +70,11 @@ module.exports = (app, ArticleService, CommentService) => {
 
   route.put(
     `/:articleId`,
-    [articleValidator, articleExist(ArticleService)],
+    [objectValidator(articleKeys), articleExist(ArticleService)],
     async (req, res) => {
       const { article } = res.locals;
       const updatedArticle = ArticleService.update(article.id, req.body);
-      return res.status(HttpCode.CREATED).json(updatedArticle);
+      return res.status(HttpCode.OK).json(updatedArticle);
     }
   );
 
