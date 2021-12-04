@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require(`fs`).promises;
-const { MockFile } = require(`../../constants`);
+const {MockFile} = require(`../../constants`);
 
 let data = [];
 

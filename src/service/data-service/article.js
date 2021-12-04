@@ -1,8 +1,8 @@
 "use strict";
 
-const { nanoid } = require(`nanoid`);
-const { MAX_ID_LENGTH } = require(`../../constants`);
-const { getRandomDate } = require(`../cli/utils`);
+const {nanoid} = require(`nanoid`);
+const {MAX_ID_LENGTH} = require(`../../constants`);
+const {getRandomDate} = require(`../cli/utils`);
 
 class ArticleService {
   constructor(articles) {
@@ -11,8 +11,8 @@ class ArticleService {
 
   create(article) {
     const newArticle = Object.assign(
-      { id: nanoid(MAX_ID_LENGTH), createdDate: getRandomDate(), comments: [] },
-      article
+        {id: nanoid(MAX_ID_LENGTH), createdDate: getRandomDate(), comments: []},
+        article
     );
 
     this._articles.push(newArticle);
@@ -41,7 +41,7 @@ class ArticleService {
   update(id, article) {
     const oldarticle = this._articles.find((item) => item.id === id);
 
-    return Object.assign(oldarticle, article, { createdDate: getRandomDate() });
+    return Object.assign(oldarticle, article, {createdDate: getRandomDate()});
   }
 }
 

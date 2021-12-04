@@ -1,13 +1,13 @@
 "use strict";
 
-const { nanoid } = require(`nanoid`);
-const { MAX_ID_LENGTH } = require(`../../constants`);
+const {nanoid} = require(`nanoid`);
+const {MAX_ID_LENGTH} = require(`../../constants`);
 
 class CommentService {
   create(comment, article) {
     const newComment = Object.assign(
-      { id: nanoid(MAX_ID_LENGTH), text: `` },
-      comment
+        {id: nanoid(MAX_ID_LENGTH), text: ``},
+        comment
     );
 
     article.comments.push(newComment);

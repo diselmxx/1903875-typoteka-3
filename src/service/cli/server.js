@@ -3,7 +3,7 @@
 const chalk = require(`chalk`);
 const express = require(`express`);
 const routes = require(`../api`);
-const { HttpCode, DEFAULT_PORT } = require(`../../constants`);
+const {HttpCode, DEFAULT_PORT} = require(`../../constants`);
 
 module.exports = {
   name: `--server`,
@@ -20,7 +20,7 @@ module.exports = {
       .on(`listening`, () => {
         console.info(chalk.green(`Ожидаю соединений на ${port}`));
       })
-      .on(`error`, ({ message }) => {
+      .on(`error`, ({message}) => {
         console.error(chalk.red(`Ошибка при создании сервера: ${message}`));
       });
   },
