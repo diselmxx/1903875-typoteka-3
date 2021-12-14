@@ -10,6 +10,7 @@ module.exports = (app, service) => {
 
   route.get(`/`, async (req, res) => {
     const categories = await service.findAll();
+    console.log(categories);
     return res.status(HttpCode.OK).json(categories);
   });
 };
