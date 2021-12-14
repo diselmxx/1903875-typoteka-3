@@ -85,7 +85,7 @@ module.exports = (app, ArticleService, CommentService) => {
         const {article} = res.locals;
         ArticleService.drop(article.id);
 
-        return res.status(HttpCode.OK).send(`Статья удалена`);
+        return res.status(HttpCode.OK).send(article);
       }
   );
 };
