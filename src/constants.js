@@ -43,3 +43,8 @@ module.exports = {
   ExitCode,
   HttpCode,
 };
+
+module.exports.Env = {
+  DEVELOPMENT: `development`,
+  PRODUCTION: `production`,
+};
