@@ -1,10 +1,10 @@
 "use strict";
 
-const { HttpCode } = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
 
 module.exports = (service) => (req, res, next) => {
-  const { article } = res.locals;
-  const { commentId } = req.params;
+  const {article} = res.locals;
+  const {commentId} = req.params;
   const comment = service.findOne(commentId, article);
 
   if (!comment) {

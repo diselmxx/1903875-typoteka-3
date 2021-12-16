@@ -1,10 +1,10 @@
 "use strict";
 
 const fs = require(`fs`).promises;
-const { nanoid } = require(`nanoid`);
+const {nanoid} = require(`nanoid`);
 
 const chalk = require(`chalk`);
-const { getRandomInt, shuffle, getRandomDate } = require(`./utils`);
+const {getRandomInt, shuffle, getRandomDate} = require(`./utils`);
 const {
   ExitCode,
   MockFile,
@@ -24,11 +24,11 @@ const readContent = async (filePath) => {
 };
 
 const generatePublication = (
-  count,
-  titles,
-  categories,
-  announces,
-  comments
+    count,
+    titles,
+    categories,
+    announces,
+    comments
 ) => {
   const randomSentencesNumber = getRandomInt(1, announces.length - 1);
   return Array(count)
@@ -70,7 +70,7 @@ module.exports = {
 
     const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
     const content = JSON.stringify(
-      generatePublication(countOffer, ...mocksContent)
+        generatePublication(countOffer, ...mocksContent)
     );
 
     try {

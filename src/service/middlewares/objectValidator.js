@@ -1,6 +1,6 @@
 "use strict";
 
-const { HttpCode } = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
 
 module.exports = (objKeys) => (req, res, next) => {
   const newItem = req.body;
@@ -9,7 +9,7 @@ module.exports = (objKeys) => (req, res, next) => {
 
   if (!keysExists) {
     res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
+  } else {
+    next();
   }
-
-  next();
 };
