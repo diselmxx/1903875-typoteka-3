@@ -8,3 +8,5 @@ env:
 
 extends: 'htmlacademy/node'
 
+ignorePatterns:
+  '**/express/public/**/*.js'
