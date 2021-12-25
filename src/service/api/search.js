@@ -9,19 +9,20 @@ module.exports = (app, mockData) => {
   app.use(`/search`, route);
 
   route.get(`/`, async (req, res) => {
+
     if (
       req.query.constructor === Object &&
       Object.keys(req.query).length === 0
     ) {
+
       return res.status(HttpCode.BAD_REQUEST).send();
     }
     const query = req.query.query;
-    const result = mockData.filter((e) => e.title.includes(query));
+    const result = mockData.filter((e) => e.title.toLowerCase().includes(query.toLowerCase()));
 
     if (result.length === 0) {
-      return res
-        .status(HttpCode.NOT_FOUND)
-        .send(`По запросу "${query}" ничего не найдено`);
+      console.log(`not found`);
+      return res.status(HttpCode.OK).send(result);
     }
     return res.status(HttpCode.OK).send(result);
   });
