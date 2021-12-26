@@ -13,7 +13,11 @@ myRouter.get(`/`, async (req, res) => {
 myRouter.get(`/comments`, async (req, res) => {
   const articles = await api.getArticles();
 
-  const comments = [].concat(...articles.map((article) => article.comments));
+  const comments = articles.reduce((arr, article) => {
+    article.comments.forEach((comment) => arr.push(comment));
+    return arr;
+  }, []);
+
   res.render(`comments`, {
     comments, wrapperClass: `wrapper wrapper--nobackground`,
   });

@@ -12,7 +12,10 @@ articlesRouter.get(`/category/:id`, (req, res) => {
   res.render(`articles-by-category`);
 });
 
-articlesRouter.get(`/add`, (req, res) => res.render(`post`));
+articlesRouter.get(`/add`, async (req, res) => {
+  const categories = await api.getCategories();
+  res.render(`post`, {categories});
+});
 
 articlesRouter.post(`/add`, upload.single(`photo`), async (req, res) => {
   const {body, file} = req;
@@ -22,7 +25,7 @@ articlesRouter.post(`/add`, upload.single(`photo`), async (req, res) => {
     announce: body.announce,
     fullText: body[`full-text`],
     title: body.title,
-    category: ensureArray(body.category),
+    category: ensureArray(body.categories),
   };
 
   try {
@@ -41,7 +44,7 @@ articlesRouter.post(`/:id`, upload.single(`photo`), async (req, res) => {
     announce: body.announce,
     fullText: body[`full-text`],
     title: body.title,
-    category: ensureArray(body.category),
+    category: ensureArray(body.categories),
   };
 
   try {

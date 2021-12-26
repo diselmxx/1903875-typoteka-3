@@ -30,6 +30,10 @@ block content
                       input.visually-hidden(type='file' name='photo' )
                       | Обзор
                 .new-publication__category-wrapper
+                  each category of categories
+                    .new-publication__checkbox.new-publication__checkbox--auto
+                      input(type='checkbox' checked=article && article.category.includes(category) id=category name="categories[]" value=category)
+                      label(for=category) #{category}
                   a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text

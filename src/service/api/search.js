@@ -21,7 +21,6 @@ module.exports = (app, mockData) => {
     const result = mockData.filter((e) => e.title.toLowerCase().includes(query.toLowerCase()));
 
     if (result.length === 0) {
-      console.log(`not found`);
       return res.status(HttpCode.OK).send(result);
     }
     return res.status(HttpCode.OK).send(result);
