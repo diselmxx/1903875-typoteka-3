@@ -21,7 +21,7 @@ Content-Type: application/json
   "title": "Новая статья",
   "announce": "Тест",
   "fullText": "Тест",
-  "category": "Тест"
+  "category": ["Тест"]
 }
 
 ###
@@ -34,7 +34,7 @@ Content-Type: application/json
   "title": "Обновленная статья",
   "announce": "Тест2",
   "fullText": "Тест2",
-  "category": "Тест2"
+  "category": ["Тест2"]
 }
 
 ###
