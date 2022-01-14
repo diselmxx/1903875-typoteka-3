@@ -14,10 +14,9 @@ myRouter.get(`/comments`, async (req, res) => {
   const articles = await api.getArticles();
 
   const comments = articles.reduce((arr, article) => {
-    article.comments.forEach((comment) => arr.push(comment));
+    arr.push(...article.comments);
     return arr;
   }, []);
-
   res.render(`comments`, {
     comments, wrapperClass: `wrapper wrapper--nobackground`,
   });
