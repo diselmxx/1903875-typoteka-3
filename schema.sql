@@ -46,6 +46,7 @@ CREATE TABLE articles
 	created_date timestamp DEFAULT current_timestamp,
   announce VARCHAR(255) NOT NULL,
   full_text TEXT NOT NULL,
+  picture varchar(50) NOT NULL,
 	author_id INTEGER NOT NULL,
 	FOREIGN KEY (author_id) REFERENCES authors (id)
 		ON DELETE CASCADE
