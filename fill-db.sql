@@ -16,11 +16,18 @@ VALUES
         'avatar1.jpg'
     ),
     (
+        'sidorov@example.com',
+        'Николай',
+        'Сидоров',
+        '5f4dcc3b5aa735d61d8327deb882cf99',
+        'avatar2.jpg'
+    ),
+    (
         'petrov@example.com',
         'Пётр',
         'Петров',
         '5f4dcc3b5aa765d61d8327deb882cf99',
-        'avatar2.jpg'
+        'avatar3.jpg'
     );
 
 --Добавить категории статей
@@ -72,39 +79,17 @@ INSERT INTO articles_categories(article_id, category_id) VALUES
 ALTER TABLE articles_categories ENABLE TRIGGER ALL;
 
 --Добавить комментарии
+ALTER TABLE comments DISABLE TRIGGER ALL;
 INSERT INTO
-    comments(text)
+    comments(text , article_id, author_id)
 VALUES
-    ('Давно не пользуюсь стационарными компьютерами. Ноутбуки победили.'),
-    ('Мне кажется или я уже читал это где-то?'),
-    ('Плюсую, но слишком много буквы! Хочу такую же футболку :-) Совсем немного...'),
-    ('Совсем немного...'),
-    ('Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Хочу такую же футболку :-)'),
-    ('Планируете записать видосик на эту тему? Совсем немного...'),
-    ('Продам крокодила, которого можно держать в гараже'),
-    ('Это где ж такие красоты?');
-
---Добавить статьям комментарии
-ALTER TABLE comments_articles DISABLE TRIGGER ALL;
-INSERT INTO comments_articles(comment_id, article_id) VALUES
-(1, 1),
-(2, 1),
-(3, 2),
-(4, 2),
-(5, 3),
-(6, 3);
-ALTER TABLE comments_articles ENABLE TRIGGER ALL;
-
---Добавить авторам комментарии
-ALTER TABLE comments_authors DISABLE TRIGGER ALL;
-INSERT INTO comments_authors(comment_id, author_id) VALUES
-(1, 1),
-(2, 1),
-(3, 1),
-(4, 2),
-(5, 2),
-(6, 2);
-ALTER TABLE comments_authors ENABLE TRIGGER ALL;
+    ('Давно не пользуюсь стационарными компьютерами. Ноутбуки победили.', 1 , 1),
+    ('Мне кажется или я уже читал это где-то?', 1, 2),
+    ('Плюсую, но слишком много буквы! Хочу такую же футболку :-) Совсем немного...', 2, 1),
+    ('Совсем немного...' , 2 ,2),
+    ('Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Хочу такую же футболку :-)', 3 ,3),
+    ('Планируете записать видосик на эту тему? Совсем немного...', 3, 3);
+  ALTER TABLE comments ENABLE TRIGGER ALL;
 
 --Добавить роли
 ALTER TABLE roles DISABLE TRIGGER ALL;
