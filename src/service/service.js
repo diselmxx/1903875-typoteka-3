@@ -8,6 +8,8 @@ const userArguments = process.argv.slice(USER_ARGV_INDEX);
 
 const [userCommand] = userArguments;
 
+console.log(userArguments);
+
 if (userArguments.length === 0) {
   Cli[DEFAULT_COMMAND].run();
 } else if (!Cli[userCommand]) {
