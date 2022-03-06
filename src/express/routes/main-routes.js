@@ -8,7 +8,7 @@ const api = getAPI();
 mainRouter.get(`/`, async (req, res) => {
   const [articles, categories] = await Promise.all([
     api.getArticles(),
-    api.getCategories(),
+    api.getCategories(true),
   ]);
   res.render(`main`, {articles, categories});
 });
@@ -30,10 +30,25 @@ mainRouter.get(`/search`, async (req, res) => {
   }
 });
 
-mainRouter.get(`/categories`, (req, res) =>
+mainRouter.get(`/categories`, async (req, res) => {
+  const categories = await api.getCategories();
   res.render(`all-categories`, {
+    categories,
     wrapperClass: `wrapper wrapper--nobackground`,
-  })
-);
+  });
+});
+
+mainRouter.post(`/categories/:id`, async (req, res) => {
+  const {body} = req;
+  const {id} = req.params;
+  try {
+    await api.updateCategory(body, id);
+    res.redirect(`/categories`);
+  } catch (error) {
+    res.redirect(`/categories`);
+  }
+
+
+});
 
 module.exports = mainRouter;

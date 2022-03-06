@@ -25,7 +25,7 @@ articlesRouter.post(`/add`, upload.single(`photo`), async (req, res) => {
     announce: body.announce,
     fullText: body[`full-text`],
     title: body.title,
-    category: ensureArray(body.categories),
+    categories: ensureArray(body.categories),
   };
 
   try {
@@ -64,8 +64,13 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
   res.render(`post`, {article, categories});
 });
 
-articlesRouter.get(`/:id`, (req, res) => {
-  res.render(`post-detail`);
+articlesRouter.get(`/:id`, async (req, res) => {
+  const {id} = req.params;
+  const [article, categories] = await Promise.all([
+    api.getArticle(id),
+    api.getCategories(false, id),
+  ]);
+  res.render(`post-detail`, {article, categories});
 });
 
 module.exports = articlesRouter;

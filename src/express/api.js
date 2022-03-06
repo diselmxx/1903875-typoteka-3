@@ -10,8 +10,8 @@ class API {
     });
   }
 
-  getArticles() {
-    return this._load(`/articles`);
+  getArticles(comments) {
+    return this._load(`/articles`, {params: {comments}});
   }
 
   getArticle(id) {
@@ -22,8 +22,8 @@ class API {
     return this._load(`/search`, {params: query});
   }
 
-  async getCategories() {
-    return await this._load(`/categories`);
+  async getCategories(count, articleId) {
+    return await this._load(`/categories`, {params: {count, articleId}});
   }
 
   async createArticle(data) {
@@ -35,6 +35,15 @@ class API {
 
   async updateArticle(data, id) {
     const url = `/articles/${id}`;
+
+    return await this._load(url, {
+      method: `PUT`,
+      data,
+    });
+  }
+
+  async updateCategory(data, id) {
+    const url = `/categories/${id}`;
     return await this._load(url, {
       method: `PUT`,
       data,
@@ -45,7 +54,6 @@ class API {
     const response = await this._http.request({url, ...options});
     return response.data;
   }
-
 }
 
 const TIMEOUT = 1000;
