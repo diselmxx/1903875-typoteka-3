@@ -8,7 +8,7 @@ const {
   commentExist,
 } = require(`../middlewares/`);
 
-const articleKeys = [`title`, `announce`, `fullText`, `category`];
+const articleKeys = [`title`, `announce`, `fullText`, `categories`];
 const commentKeys = [`text`];
 
 module.exports = (app, ArticleService, CommentService) => {
@@ -17,13 +17,15 @@ module.exports = (app, ArticleService, CommentService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const articles = await ArticleService.findAll();
+    const articles = await ArticleService.findAll(req.params);
     res.status(HttpCode.OK).json(articles);
   });
 
   route.get(`/:articleId`, articleExist(ArticleService), async (req, res) => {
     const {article} = res.locals;
-    return res.status(HttpCode.OK).json(article);
+    const {categories} = req.query;
+    const reqArticle = await ArticleService.findOne(article.id, categories);
+    res.status(HttpCode.OK).json(reqArticle);
   });
 
   route.get(
@@ -32,7 +34,7 @@ module.exports = (app, ArticleService, CommentService) => {
       async (req, res) => {
         const {article} = res.locals;
 
-        const comments = CommentService.findAll(article);
+        const comments = await CommentService.findAll(article.id);
         return res.status(HttpCode.OK).json(comments);
       }
   );
@@ -43,7 +45,7 @@ module.exports = (app, ArticleService, CommentService) => {
       objectValidator(commentKeys),
       async (req, res) => {
         const {article} = res.locals;
-        const newComment = CommentService.create(req.body, article);
+        const newComment = await CommentService.create(article.id, req.body);
         return res
         .status(HttpCode.CREATED)
         .json({id: newComment.id, text: newComment.text});
@@ -55,16 +57,16 @@ module.exports = (app, ArticleService, CommentService) => {
       articleExist(ArticleService),
       commentExist(CommentService),
       async (req, res) => {
-        const {article, comment} = res.locals;
-        CommentService.drop(comment.id, article);
+        // const {article, comment} = res.locals;
+        const {comment} = res.locals;
+        await CommentService.drop(comment.id);
 
         return res.status(HttpCode.OK).send(`Комментарий удалён`);
       }
   );
 
   route.post(`/`, objectValidator(articleKeys), async (req, res) => {
-    const article = ArticleService.create(req.body);
-
+    const article = await ArticleService.create(req.body);
     return res.status(HttpCode.CREATED).json(article);
   });
 
@@ -73,7 +75,7 @@ module.exports = (app, ArticleService, CommentService) => {
       [objectValidator(articleKeys), articleExist(ArticleService)],
       async (req, res) => {
         const {article} = res.locals;
-        const updatedArticle = ArticleService.update(article.id, req.body);
+        const updatedArticle = await ArticleService.update(article.id, req.body);
         return res.status(HttpCode.OK).json(updatedArticle);
       }
   );
