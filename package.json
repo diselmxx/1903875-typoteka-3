@@ -6,7 +6,8 @@
   "scripts": {
     "eslint": "eslint --ext .js src/",
     "start": "cross-env LOG_LEVEL=error NODE_ENV=production nodemon -r dotenv/config ./src/service/service.js",
-    "start::debug": "cross-env LOG_LEVEL=info NODE_ENV=development node -r dotenv/config ./src/service/service.js",
+    "start::debug": "cross-env LOG_LEVEL=info NODE_ENV=development nodemon -r dotenv/config ./src/service/service.js --server",
+    "fill-db": "cross-env LOG_LEVEL=info NODE_ENV=development nodemon -r dotenv/config ./src/service/service.js --filldb 5",
     "start-frontend-server": "nodemon ./src/express/express.js",
     "test": "npm run eslint && npm run jest",
     "jest": "jest"
@@ -27,6 +28,7 @@
     "jest": "27.4.3",
     "nodemon": "2.0.13",
     "pino-pretty": "7.3.0",
+    "sqlite3": "5.0.2",
     "supertest": "6.1.6"
   },
   "dependencies": {

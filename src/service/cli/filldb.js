@@ -1,15 +1,22 @@
 "use strict";
 
 const fs = require(`fs`).promises;
-const {nanoid} = require(`nanoid`);
+const sequelize = require(`../lib/sequelize`);
+const initDb = require(`../lib/init-db`);
+const {getLogger} = require(`../lib/logger`);
+const logger = getLogger({name: `filldb`});
 
 const chalk = require(`chalk`);
-const {getRandomInt, shuffle, getRandomDate} = require(`./utils`);
+const {
+  getRandomInt,
+  shuffle,
+  getRandomDate,
+  getRandomSubarray,
+} = require(`./utils`);
 const {
   ExitCode,
   MockFile,
   DEFAULT_COUNT,
-  MAX_ID_LENGTH,
   MAX_COMMENTS,
 } = require(`../../constants`);
 
@@ -28,19 +35,20 @@ const generatePublication = (
     titles,
     categories,
     announces,
-    comments
+    comments,
+    authors
 ) => {
   const randomSentencesNumber = getRandomInt(1, announces.length - 1);
   return Array(count)
     .fill({})
     .map(() => ({
-      id: nanoid(MAX_ID_LENGTH),
       title: titles[getRandomInt(0, titles.length - 1)],
       createdDate: getRandomDate(),
       announce: shuffle(announces).slice(1, 5).join(` `),
       fullText: shuffle(announces).slice(1, randomSentencesNumber).join(` `),
-      category: [categories[getRandomInt(0, categories.length - 1)]],
+      category: getRandomSubarray(categories),
       comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments),
+      author: authors[getRandomInt(0, authors.length - 1)],
     }));
 };
 
@@ -48,13 +56,38 @@ const generateComments = (count, comments) =>
   Array(count)
     .fill({})
     .map(() => ({
-      id: nanoid(MAX_ID_LENGTH),
       text: shuffle(comments).slice(0, getRandomInt(1, 3)).join(` `),
     }));
 
+const authors = [
+  {
+    email: `ivanov@example.com`,
+    firstname: `Иван`,
+    lastname: `Иванов`,
+    password: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    avater: `'avatar1.jpg`,
+  },
+  {
+    email: `petrov@example.com`,
+    firstname: `Пётр`,
+    lastname: `Петров`,
+    password: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    avater: `'avatar2.jpg`,
+  },
+];
+
 module.exports = {
-  name: `--generate`,
+  name: `--filldb`,
   async run(args) {
+    try {
+      logger.info(`Trying to connect to database...`);
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(1);
+    }
+    logger.info(`Connection to database established`);
+
     const mocksContent = await Promise.all([
       readContent(MockFile.TITLES_PATH),
       readContent(MockFile.CATEGORIES_PATH),
@@ -62,23 +95,33 @@ module.exports = {
       readContent(MockFile.COMMENTS_PATH),
     ]);
 
+    const [titles, categories, announces, comments] = [...mocksContent];
+
     const [count] = args;
+
     if (count > 1000) {
       console.error(chalk.red(`Не больше 1000 объявлений`));
       process.exit(ExitCode.ERROR);
     }
 
-    const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
-    const content = JSON.stringify(
-        generatePublication(countOffer, ...mocksContent)
+    const countArticle = Number.parseInt(count, 10) || DEFAULT_COUNT;
+
+    const articles = generatePublication(
+        countArticle,
+        titles,
+        categories,
+        announces,
+        comments,
+        authors
     );
 
     try {
-      await fs.writeFile(MockFile.NAME, content);
-      console.info(chalk.green(`Operation success. File created.`));
+      await initDb(sequelize, {categories, articles, authors});
+      console.info(chalk.green(`Operation success. Data base created.`));
       process.exit(ExitCode.SUCCESS);
     } catch (err) {
-      console.error(chalk.red(`Can't write data to file...`));
+      console.error(chalk.red(`Can't create data base...`));
+      console.error(err);
       process.exit(ExitCode.ERROR);
     }
   },
