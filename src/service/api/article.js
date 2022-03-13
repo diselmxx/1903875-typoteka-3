@@ -8,7 +8,7 @@ const {
   commentExist,
 } = require(`../middlewares/`);
 
-const articleKeys = [`title`, `announce`, `fullText`, `categories`];
+const articleKeys = [`title`, `announce`, `fullText`];
 const commentKeys = [`text`];
 
 module.exports = (app, ArticleService, CommentService) => {

@@ -69,9 +69,10 @@ block content
         each article of articles
           li(class=`preview__item ${!article.scr && 'preview__item--noimage'}`)
             ul.preview__breadcrumbs
-              each category of article.categories
-                li.preview__breadcrumbs-item
-                  a.preview__breadcrumbs-link(href='#') #{category.title}
+              each category,i in article.categories
+                if i <= 3
+                  li.preview__breadcrumbs-item
+                    a.preview__breadcrumbs-link(href='#') #{category.title}
             if article.picture
               .preview__background
                 img.preview__background-image(src=`/img/${article.picture}` width='460' height='240' alt=article.title)
