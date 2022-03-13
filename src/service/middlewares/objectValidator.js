@@ -9,6 +9,7 @@ module.exports = (objKeys) => (req, res, next) => {
 
   if (!keysExists) {
     res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
+    console.log(`Validation error`);
   } else {
     next();
   }

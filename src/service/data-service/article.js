@@ -1,47 +1,62 @@
 "use strict";
 
-const {nanoid} = require(`nanoid`);
-const {MAX_ID_LENGTH} = require(`../../constants`);
-const {getRandomDate} = require(`../cli/utils`);
+const Aliase = require(`../models/aliase`);
+// const Sequelize = require(`sequelize`);
 
 class ArticleService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
+    this._Comment = sequelize.models.Comment;
+    this._Category = sequelize.models.Category;
+    this._ArticleCategory = sequelize.models.ArticleCategory;
   }
 
-  create(article) {
-    const newArticle = Object.assign(
-        {id: nanoid(MAX_ID_LENGTH), createdDate: getRandomDate(), comments: []},
-        article
-    );
-
-    this._articles.push(newArticle);
-    return newArticle;
+  async findOne(id) {
+    return await this._Article.findByPk(id);
   }
 
-  drop(id) {
-    const article = this._articles.find((item) => item.id === id);
+  async create(articleData) {
+    const article = await this._Article.create(articleData);
+    // console.log(articleData);
+    // const article = await this._Article.create(
+    //     articleData,
+    //     {
+    //       include: [Aliase.CATEGORIES],
+    //     }
+    // );
 
-    if (!article) {
-      return null;
+    return article.get();
+  }
+
+  async drop(id) {
+    const deletedRows = await this._Article.destroy({
+      where: {id},
+    });
+    return !!deletedRows;
+  }
+
+  async update(id, article) {
+    const [affectedRows] = await this._Article.update(article, {
+      where: {id},
+    });
+    // look here https://www.codegrepper.com/code-examples/javascript/sequelize+update+association+include
+
+    return !!affectedRows;
+  }
+
+  async findAll(needComments) {
+    const include = [Aliase.CATEGORIES];
+
+    if (needComments) {
+      include.push(Aliase.COMMENTS);
     }
 
-    this._articles = this._articles.filter((item) => item.id !== id);
-    return article;
-  }
+    const article = await this._Article.findAll({
+      include,
+      order: [[`createdAt`, `DESC`]],
+    });
 
-  findAll() {
-    return this._articles;
-  }
-
-  findOne(id) {
-    return this._articles.find((item) => item.id === id);
-  }
-
-  update(id, article) {
-    const oldarticle = this._articles.find((item) => item.id === id);
-
-    return Object.assign(oldarticle, article, {createdDate: getRandomDate()});
+    return article.map((item) => item.get());
   }
 }
 

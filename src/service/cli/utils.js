@@ -36,8 +36,19 @@ const shuffle = (someArray) => {
   return someArray;
 };
 
+const getRandomSubarray = (items) => {
+  items = items.slice();
+  let count = getRandomInt(1, items.length - 1);
+  const result = [];
+  while (count--) {
+    result.push(...items.splice(getRandomInt(0, items.length - 1), 1));
+  }
+  return result;
+};
+
 module.exports = {
   getRandomInt,
   getRandomDate,
+  getRandomSubarray,
   shuffle,
 };
