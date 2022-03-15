@@ -10,8 +10,9 @@ class API {
     });
   }
 
-  getArticles(comments) {
-    return this._load(`/articles`, {params: {comments}});
+
+  getArticles({offset, limit, comments}) {
+    return this._load(`/articles`, {params: {offset, limit, comments}});
   }
 
   getArticle(id) {
@@ -35,7 +36,6 @@ class API {
 
   async updateArticle(data, id) {
     const url = `/articles/${id}`;
-
     return await this._load(url, {
       method: `PUT`,
       data,

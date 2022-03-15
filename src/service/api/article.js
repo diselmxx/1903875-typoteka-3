@@ -8,7 +8,7 @@ const {
   commentExist,
 } = require(`../middlewares/`);
 
-const articleKeys = [`title`, `announce`, `fullText`, `categories`];
+const articleKeys = [`title`, `announce`, `fullText`];
 const commentKeys = [`text`];
 
 module.exports = (app, ArticleService, CommentService) => {
@@ -16,9 +16,20 @@ module.exports = (app, ArticleService, CommentService) => {
 
   app.use(`/articles`, route);
 
+  // route.get(`/`, async (req, res) => {
+  //   const articles = await ArticleService.findAll(req.params);
+  //   res.status(HttpCode.OK).json(articles);
+  // });
+
   route.get(`/`, async (req, res) => {
-    const articles = await ArticleService.findAll(req.params);
-    res.status(HttpCode.OK).json(articles);
+    const {offset, limit, comments} = req.query;
+    let result;
+    if (limit || offset) {
+      result = await ArticleService.findPage({limit, offset});
+    } else {
+      result = await ArticleService.findAll(comments);
+    }
+    res.status(HttpCode.OK).json(result);
   });
 
   route.get(`/:articleId`, articleExist(ArticleService), async (req, res) => {

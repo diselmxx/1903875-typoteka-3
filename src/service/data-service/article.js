@@ -17,14 +17,7 @@ class ArticleService {
 
   async create(articleData) {
     const article = await this._Article.create(articleData);
-    // console.log(articleData);
-    // const article = await this._Article.create(
-    //     articleData,
-    //     {
-    //       include: [Aliase.CATEGORIES],
-    //     }
-    // );
-
+    await article.addCategories(articleData.categories);
     return article.get();
   }
 
@@ -36,12 +29,12 @@ class ArticleService {
   }
 
   async update(id, article) {
-    const [affectedRows] = await this._Article.update(article, {
+    const [updatedArticle] = await this._Article.update(article, {
       where: {id},
+      // include: Aliase.CATEGORIES,
     });
-    // look here https://www.codegrepper.com/code-examples/javascript/sequelize+update+association+include
 
-    return !!affectedRows;
+    return !!updatedArticle;
   }
 
   async findAll(needComments) {
@@ -58,6 +51,18 @@ class ArticleService {
 
     return article.map((item) => item.get());
   }
+
+  async findPage({limit, offset}) {
+    const {count, rows} = await this._Article.findAndCountAll({
+      limit,
+      offset,
+      include: [Aliase.CATEGORIES],
+      order: [[`createdAt`, `DESC`]],
+      distinct: true,
+    });
+    return {count, articles: rows};
+  }
+
 }
 
 module.exports = ArticleService;

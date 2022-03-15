@@ -69,9 +69,10 @@ block content
         each article of articles
           li(class=`preview__item ${!article.scr && 'preview__item--noimage'}`)
             ul.preview__breadcrumbs
-              each category of article.categories
-                li.preview__breadcrumbs-item
-                  a.preview__breadcrumbs-link(href='#') #{category.title}
+              each category,i in article.categories
+                if i <= 3
+                  li.preview__breadcrumbs-item
+                    a.preview__breadcrumbs-link(href='#') #{category.title}
             if article.picture
               .preview__background
                 img.preview__background-image(src=`/img/${article.picture}` width='460' height='240' alt=article.title)
@@ -82,20 +83,5 @@ block content
             a.preview__comment(href='#')
               | Комментарии
               span.preview__cloud
-              b.preview__comment-count #{article.comments.length}
-    .preview__toggle-wrapper
-      ul.preview__pagination.pagination
-        li
-          a.pagination__button.button.button--backwards.button--disabled(href='#' aria-label='Страница назад') Назад
-        li.pagination__item.pagination__item--active
-          a(href='#') 1
-        li.pagination__item
-          a(href='#') 2
-        li.pagination__item
-          a(href='#') 3
-        li.pagination__item
-          a(href='#') 4
-        li.pagination__item
-          a(href='#') 5
-        li
-          a.pagination__button.button.button--forward(href='#' aria-label='Страница вперед') Вперед
+              //- b.preview__comment-count #{article.comments.length}
+    +pagination(page, totalPages, 2, `?`)
