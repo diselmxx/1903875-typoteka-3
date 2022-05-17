@@ -61,6 +61,19 @@ articlesRouter.post(`/:id`, upload.single(`photo`), async (req, res) => {
   }
 });
 
+articlesRouter.post(
+    `/:articleId/comments`,
+    async (req, res) => {
+      const {articleId} = req.params;
+      try {
+        await api.createComment(req.body, articleId);
+        res.redirect(`back`);
+      } catch (error) {
+        res.redirect(`back`);
+      }
+    }
+);
+
 articlesRouter.get(`/edit/:id`, async (req, res) => {
   const {id} = req.params;
   const [article, categories] = await Promise.all([
@@ -72,11 +85,12 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
 
 articlesRouter.get(`/:id`, async (req, res) => {
   const {id} = req.params;
-  const [article, categories] = await Promise.all([
+  const [article, categories, comments] = await Promise.all([
     api.getArticle(id),
     api.getCategories(false, id),
+    api.getArticleComments(id)
   ]);
-  res.render(`post-detail`, {article, categories});
+  res.render(`post-detail`, {article, categories, comments});
 });
 
 module.exports = articlesRouter;

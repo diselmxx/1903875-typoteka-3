@@ -10,13 +10,16 @@ class API {
     });
   }
 
-
   getArticles({offset, limit, comments}) {
     return this._load(`/articles`, {params: {offset, limit, comments}});
   }
 
   getArticle(id) {
     return this._load(`/articles/${id}`);
+  }
+
+  getArticleComments(id) {
+    return this._load(`/articles/${id}/comments`);
   }
 
   search(query) {
@@ -29,6 +32,13 @@ class API {
 
   async createArticle(data) {
     return await this._load(`/articles`, {
+      method: `POST`,
+      data,
+    });
+  }
+
+  async createComment(data, id) {
+    return await this._load(`/articles/${id}/comments`, {
       method: `POST`,
       data,
     });
