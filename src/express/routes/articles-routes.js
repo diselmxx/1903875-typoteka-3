@@ -4,7 +4,7 @@ const {Router} = require(`express`);
 const articlesRouter = new Router();
 const {getAPI} = require(`../api`);
 const {upload} = require(`../multer`);
-const {ensureArray} = require(`../utils`);
+const {ensureArray, prepareErrors} = require(`../utils`);
 const api = getAPI();
 
 
@@ -31,9 +31,15 @@ articlesRouter.post(`/add`, upload.single(`photo`), async (req, res) => {
   try {
     await api.createArticle(articleData);
     res.redirect(`/my`);
-  } catch (error) {
-    res.redirect(`back`);
+  } catch (errors) {
+    const validationMessages = prepareErrors(errors);
+    const categories = await api.getCategories();
+    res.render(`post`, {
+      categories,
+      validationMessages,
+    });
   }
+
 });
 
 articlesRouter.post(`/:id`, upload.single(`photo`), async (req, res) => {
@@ -44,7 +50,7 @@ articlesRouter.post(`/:id`, upload.single(`photo`), async (req, res) => {
     announce: body.announce,
     fullText: body[`full-text`],
     title: body.title,
-    category: ensureArray(body.categories),
+    categories: ensureArray(body.categories),
   };
 
   try {
