@@ -36,7 +36,7 @@ const define = (sequelize) => {
   Comment.belongsTo(Author, {foreignKey: `authorId`});
 
   class ArticleCategory extends Model {}
-  ArticleCategory.init({}, {sequelize});
+  ArticleCategory.init({}, {sequelize, tableName: `article_categories`});
 
   Article.belongsToMany(Category, {
     through: ArticleCategory,

@@ -33,6 +33,27 @@ mixin pagination(page, totalPages, width, prefix)
         li
           a.pagination__button.button.button--forward(href=`${prefix}page=${page + 1}` aria-label='Страница вперед') Вперед
 
+//- Миксин для ошибок валидации
+style.
+  .server-errors {
+    position:fixed;
+    right: 10px;
+    top: 10px;
+  }
+  .server-error{
+    border-radius: 10px;
+    color: white;
+    background-color: tomato;
+    margin: 20px 0;
+    padding: 10px;
+  }
+
+mixin insertErrorMessage(messages)
+  if messages
+    div.server-errors
+      each message of messages
+        .server-error= message
+
 doctype html
 html(lang='ru')
   head

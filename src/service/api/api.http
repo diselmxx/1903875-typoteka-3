@@ -19,9 +19,9 @@ Content-Type: application/json
 
 {
   "title": "Новая статья",
-  "announce": "Тест",
-  "fullText": "Тест",
-  "categories": ["Тест"]
+  "announce": "Тестssssssssssssssssssssssssssssssssssssssssssssss",
+  "fullText": "Тестssssssssssssssssssssssssssssssssssssssssssssss",
+  "categories": [1]
 }
 
 ###

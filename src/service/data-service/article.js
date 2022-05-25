@@ -31,8 +31,12 @@ class ArticleService {
   async update(id, article) {
     const [updatedArticle] = await this._Article.update(article, {
       where: {id},
-      // include: Aliase.CATEGORIES,
     });
+
+    if (article.categories) {
+      const art = await this._Article.findByPk(id);
+      await art.setCategories(article.categories);
+    }
 
     return !!updatedArticle;
   }
