@@ -1,7 +1,6 @@
 "use strict";
 
 const Aliase = require(`../models/aliase`);
-// const Sequelize = require(`sequelize`);
 
 class ArticleService {
   constructor(sequelize) {
@@ -45,7 +44,19 @@ class ArticleService {
     const include = [Aliase.CATEGORIES];
 
     if (needComments) {
-      include.push(Aliase.COMMENTS);
+      include.push({
+        model: this._Comment,
+        as: Aliase.COMMENTS,
+        include: [
+          {
+            model: this._User,
+            as: Aliase.USERS,
+            attributes: {
+              exclude: [`password`],
+            },
+          },
+        ],
+      });
     }
 
     const article = await this._Article.findAll({

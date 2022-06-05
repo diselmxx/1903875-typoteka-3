@@ -1,11 +1,11 @@
 DROP TABLE IF EXISTS articles_categories;
 DROP TABLE IF EXISTS articles cascade;
-DROP TABLE IF EXISTS authors cascade;
+DROP TABLE IF EXISTS users cascade;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS comments cascade;
 
-CREATE TABLE authors
+CREATE TABLE users
 (
 	id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -19,8 +19,8 @@ CREATE TABLE roles
 (
 	id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	role_name VARCHAR(255) NOT NULL,
-  author_id INTEGER NOT NULL,
-  FOREIGN KEY (author_id) REFERENCES authors (id)
+  user_id INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users (id)
     ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
@@ -39,8 +39,8 @@ CREATE TABLE articles
   announce VARCHAR(255) NOT NULL,
   full_text TEXT NOT NULL,
   picture varchar(255) NOT NULL,
-	author_id INTEGER NOT NULL,
-	FOREIGN KEY (author_id) REFERENCES authors (id)
+	user_id INTEGER NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
@@ -51,11 +51,11 @@ CREATE TABLE comments
 	text TEXT NOT NULL,
   created_date timestamp DEFAULT current_timestamp,
   article_id INTEGER NOT NULL,
-  author_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
   FOREIGN KEY (article_id) REFERENCES articles (id)
     ON DELETE CASCADE
 		ON UPDATE CASCADE,
-  FOREIGN KEY (author_id) REFERENCES authors (id)
+  FOREIGN KEY (user_id) REFERENCES users (id)
     ON DELETE CASCADE
 		ON UPDATE CASCADE
 );

@@ -4,9 +4,9 @@ const defineModels = require(`../models`);
 const Aliase = require(`../models/aliase`);
 
 
-module.exports = async (sequelize, {categories, articles, authors}) => {
+module.exports = async (sequelize, {categories, articles, users}) => {
 
-  const {Category, Article, Author} = defineModels(sequelize);
+  const {Category, Article, User} = defineModels(sequelize);
   await sequelize.sync({force: true});
 
   const categoryModels = await Category.bulkCreate(
@@ -15,9 +15,32 @@ module.exports = async (sequelize, {categories, articles, authors}) => {
       })
   );
 
-  const authorModels = await Author.bulkCreate(
-      authors.map((item) => ({...item}))
+  // const userModels = await User.bulkCreate(
+  //     users.map((item) => ({...item}))
+  // );
+
+  // --------------------------
+
+  const userModels = await User.bulkCreate(users, {
+    include: [Aliase.ARTICLES, Aliase.COMMENTS],
+  });
+
+  const userIdByEmail = userModels.reduce(
+      (acc, next) => ({
+        [next.email]: next.id,
+        ...acc,
+      }),
+      {}
   );
+
+  articles.forEach((article) => {
+    article.userId = userIdByEmail[article.user];
+    article.comments.forEach((comment) => {
+      comment.userId = userIdByEmail[comment.user];
+    });
+  });
+
+  // --------------------------
 
   const categoryIdByName = categoryModels.reduce(
       (acc, next) => ({
@@ -33,8 +56,7 @@ module.exports = async (sequelize, {categories, articles, authors}) => {
     await articleModel.addCategories(
         article.category.map((title) => categoryIdByName[title])
     );
-    // Todo set random authors
-    await articleModel.setAuthor(authorModels[0]);
+    // await articleModel.setUsers(userModels[0]);
   });
   await Promise.all(articlePromises);
 };

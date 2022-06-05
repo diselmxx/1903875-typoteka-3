@@ -3,6 +3,8 @@
 const {Router} = require(`express`);
 const mainRouter = new Router();
 const {getAPI} = require(`../api`);
+const {upload} = require(`../middlewares/upload`);
+const {prepareErrors} = require(`../utils`);
 const api = getAPI();
 const ARTICLES_PER_PAGE = 8;
 
@@ -32,7 +34,6 @@ mainRouter.get(`/`, async (req, res) => {
 
 mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
 mainRouter.get(`/login`, (req, res) => res.render(`login`));
-
 mainRouter.get(`/search`, async (req, res) => {
   if (req.query.constructor === Object && Object.keys(req.query).length === 0) {
     res.render(`search`, {wrapperClass: `wrapper-color`});
@@ -64,8 +65,26 @@ mainRouter.post(`/categories/:id`, async (req, res) => {
   } catch (error) {
     res.redirect(`/categories`);
   }
-
-
 });
+
+mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
+  const {body, file} = req;
+  const userData = {
+    avatar: file ? file.filename : ``,
+    email: body.email,
+    firstname: body.firstname,
+    lastname: body.lastname,
+    password: body.password,
+    passwordRepeated: body[`repeat-password`],
+  };
+  try {
+    await api.createUser(userData);
+    res.redirect(`/login`);
+  } catch (errors) {
+    const validationMessages = prepareErrors(errors);
+    res.render(`sign-up`, {validationMessages});
+  }
+});
+
 
 module.exports = mainRouter;

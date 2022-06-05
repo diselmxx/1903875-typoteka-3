@@ -3,7 +3,7 @@
 const {Router} = require(`express`);
 const articlesRouter = new Router();
 const {getAPI} = require(`../api`);
-const {upload} = require(`../multer`);
+const {upload} = require(`../multer`); // Todo use upload from middlewears
 const {ensureArray, prepareErrors} = require(`../utils`);
 const api = getAPI();
 

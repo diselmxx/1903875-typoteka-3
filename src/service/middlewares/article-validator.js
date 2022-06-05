@@ -12,6 +12,7 @@ const ErrorArticleMessage = {
   FULLTEXT_MIN: `Описание содержит меньше 50 символов`,
   FULLTEXT_MAX: `Описание не может содержать более 1000 символов`,
   PICTURE: `Изображение не выбрано или тип изображения не поддерживается`,
+  USER_ID: `Некорректный идентификатор пользователя`,
 };
 
 const schema = Joi.object({
@@ -38,6 +39,9 @@ const schema = Joi.object({
     "string.min": ErrorArticleMessage.FULLTEXT_MIN,
     "string.max": ErrorArticleMessage.FULLTEXT_MAX,
     "string.empty": `Описание должно быть заполнено`,
+  }),
+  userId: Joi.number().integer().positive().required().messages({
+    "number.base": ErrorArticleMessage.USER_ID,
   }),
 });
 

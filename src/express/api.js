@@ -37,6 +37,13 @@ class API {
     });
   }
 
+  async createUser(data) {
+    return await this._load(`/user`, {
+      method: `POST`,
+      data,
+    });
+  }
+
   async createComment(data, id) {
     return await this._load(`/articles/${id}/comments`, {
       method: `POST`,
