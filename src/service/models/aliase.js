@@ -3,7 +3,7 @@
 module.exports = {
   COMMENTS: `comments`,
   ARTICLES: `articles`,
-  AUTHORS: `authors`,
+  USERS: `users`,
   CATEGORIES: `categories`,
   ARTICLE_CATEGORIES: `articleCategories`,
 };

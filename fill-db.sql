@@ -1,6 +1,6 @@
 --Добавить авторов
 INSERT INTO
-    authors(
+    users(
         email,
         firstname,
         lastname,
@@ -42,7 +42,7 @@ VALUES
 ALTER TABLE
     articles DISABLE TRIGGER ALL;
 INSERT INTO
-    articles(title, announce, full_text, picture, author_id)
+    articles(title, announce, full_text, picture, user_id)
 VALUES
     (
         'Разработка плагина брендирования',
@@ -81,7 +81,7 @@ ALTER TABLE articles_categories ENABLE TRIGGER ALL;
 --Добавить комментарии
 ALTER TABLE comments DISABLE TRIGGER ALL;
 INSERT INTO
-    comments(text , article_id, author_id)
+    comments(text , article_id, user_id)
 VALUES
     ('Давно не пользуюсь стационарными компьютерами. Ноутбуки победили.', 1 , 1),
     ('Мне кажется или я уже читал это где-то?', 1, 2),
@@ -93,7 +93,7 @@ VALUES
 
 --Добавить роли
 ALTER TABLE roles DISABLE TRIGGER ALL;
-INSERT INTO roles(role_name, author_id) VALUES
+INSERT INTO roles(role_name, user_id) VALUES
 ('Гость', 1),
 ('Читатель', 1),
 ('Автор', 2);

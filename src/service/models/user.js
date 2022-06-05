@@ -3,13 +3,13 @@
 const {DataTypes, Model} = require(`sequelize`);
 
 class User extends Model {}
-
 const define = (sequelize) =>
   User.init(
       {
         email: {
           type: DataTypes.STRING,
           allowNull: false,
+          unique: true,
         },
         firstname: {
           type: DataTypes.STRING,
@@ -23,7 +23,10 @@ const define = (sequelize) =>
           type: DataTypes.STRING,
           allowNull: false,
         },
-        avatar: DataTypes.STRING,
+        avatar: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
       },
       {
         sequelize,
