@@ -3,6 +3,7 @@
 const fs = require(`fs`).promises;
 const sequelize = require(`../lib/sequelize`);
 const initDb = require(`../lib/init-db`);
+const passwordUtils = require(`../lib/password`);
 const {getLogger} = require(`../lib/logger`);
 const logger = getLogger({name: `filldb`});
 
@@ -36,7 +37,7 @@ const generatePublication = (
     categories,
     announces,
     comments,
-    authors
+    users
 ) => {
   const randomSentencesNumber = getRandomInt(1, announces.length - 1);
   return Array(count)
@@ -47,34 +48,18 @@ const generatePublication = (
       announce: shuffle(announces).slice(1, 5).join(` `),
       fullText: shuffle(announces).slice(1, randomSentencesNumber).join(` `),
       category: getRandomSubarray(categories),
-      comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments),
-      author: authors[getRandomInt(0, authors.length - 1)],
+      comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments, users),
+      user: users[getRandomInt(0, users.length - 1)].email,
     }));
 };
 
-const generateComments = (count, comments) =>
+const generateComments = (count, comments, users) =>
   Array(count)
     .fill({})
     .map(() => ({
       text: shuffle(comments).slice(0, getRandomInt(1, 3)).join(` `),
+      user: users[getRandomInt(0, users.length - 1)].email,
     }));
-
-const authors = [
-  {
-    email: `ivanov@example.com`,
-    firstname: `Иван`,
-    lastname: `Иванов`,
-    password: `5f4dcc3b5aa765d61d8327deb882cf99`,
-    avater: `'avatar1.jpg`,
-  },
-  {
-    email: `petrov@example.com`,
-    firstname: `Пётр`,
-    lastname: `Петров`,
-    password: `5f4dcc3b5aa765d61d8327deb882cf99`,
-    avater: `'avatar2.jpg`,
-  },
-];
 
 module.exports = {
   name: `--filldb`,
@@ -95,6 +80,23 @@ module.exports = {
       readContent(MockFile.COMMENTS_PATH),
     ]);
 
+    const users = [
+      {
+        email: `ivanov@example.com`,
+        firstname: `Иван`,
+        lastname: `Иванов`,
+        password: await passwordUtils.hash(`ivanov`),
+        avatar: `'avatar1.jpg`,
+      },
+      {
+        email: `petrov@example.com`,
+        firstname: `Пётр`,
+        lastname: `Петров`,
+        password: await passwordUtils.hash(`petrov`),
+        avatar: `'avatar2.jpg`,
+      },
+    ];
+
     const [titles, categories, announces, comments] = [...mocksContent];
 
     const [count] = args;
@@ -112,11 +114,11 @@ module.exports = {
         categories,
         announces,
         comments,
-        authors
+        users
     );
 
     try {
-      await initDb(sequelize, {categories, articles, authors});
+      await initDb(sequelize, {categories, articles, users});
       console.info(chalk.green(`Operation success. Data base created.`));
       process.exit(ExitCode.SUCCESS);
     } catch (err) {
