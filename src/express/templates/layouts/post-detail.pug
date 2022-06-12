@@ -18,11 +18,12 @@ block content
             ul.post__themes.themes
               each category of categories
                 li.themes__item
-                  a.themes__item-link(href='#') #{category.title}
+                  a.themes__item-link(href=`/articles/category/${category.id}`) #{category.title}
                     sup #{category.count}
                   button.themes__remove-btn(type='button') Удалить категорию
-          .post__picture
-            img(src=`/img/${article.picture}` alt=`${article.title}`)
+          if article.picture
+            .post__picture
+              img(src=`/img/${article.picture}` alt=`${article.title}`)
           .post__text
             h3 Бирюзовое доверие
             p
@@ -49,10 +50,11 @@ block content
                     p Admin •
                     time.comments__date(datetime=`${comment.createdDate}`) #{comment.createdDate}
                   p.comments__message #{comment.text}
-          .comments__footer.comments__footer--user
-            form(action=`/articles/${article.id}/comments` method='POST')
-              .comments__avatar.avatar
-                img(src='/img/avatar-2.png' alt='аватар пользователя')
-              label
-                textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
-              button.comments__button.button.button--colored(type='submit') Опубликовать
+          if user
+            .comments__footer.comments__footer--user
+              form(action=`/articles/${article.id}/comments` method='POST')
+                .comments__avatar.avatar
+                  img(src=`/img/${user.avatar}` alt='аватар пользователя')
+                label
+                  textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
+                button.comments__button.button.button--colored(type='submit') Опубликовать
