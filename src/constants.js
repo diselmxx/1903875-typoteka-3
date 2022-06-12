@@ -14,6 +14,8 @@ const ExitCode = {
   ERROR: 1,
 };
 
+const Roles = [`author`, `guest`, `reader`];
+
 const HttpCode = {
   OK: 200,
   CREATED: 201,
@@ -42,6 +44,7 @@ module.exports = {
   MockFile,
   ExitCode,
   HttpCode,
+  Roles,
 };
 
 module.exports.Env = {
