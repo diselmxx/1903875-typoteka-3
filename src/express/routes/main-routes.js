@@ -18,6 +18,7 @@ const ARTICLES_PER_PAGE = 8;
 
 mainRouter.get(`/`, async (req, res) => {
   let {page = 1} = req.query;
+  const {user} = req.session;
   page = +page;
 
   const limit = ARTICLES_PER_PAGE;
@@ -29,12 +30,13 @@ mainRouter.get(`/`, async (req, res) => {
   ]);
 
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
-  res.render(`main`, {articles, page, totalPages, categories});
+  res.render(`main`, {articles, page, totalPages, categories, user});
 });
 
 mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
 mainRouter.get(`/login`, (req, res) => res.render(`login`));
 mainRouter.get(`/search`, async (req, res) => {
+  const {user} = req.session;
   if (req.query.constructor === Object && Object.keys(req.query).length === 0) {
     res.render(`search`, {wrapperClass: `wrapper-color`});
   } else {
@@ -43,27 +45,9 @@ mainRouter.get(`/search`, async (req, res) => {
       results,
       wrapperClass: `wrapper-color`,
       searchResultsEmpty: results.length === 0,
-      query: req.query.query
+      query: req.query.query,
+      user
     });
-  }
-});
-
-mainRouter.get(`/categories`, async (req, res) => {
-  const categories = await api.getCategories();
-  res.render(`all-categories`, {
-    categories,
-    wrapperClass: `wrapper wrapper--nobackground`,
-  });
-});
-
-mainRouter.post(`/categories/:id`, async (req, res) => {
-  const {body} = req;
-  const {id} = req.params;
-  try {
-    await api.updateCategory(body, id);
-    res.redirect(`/categories`);
-  } catch (error) {
-    res.redirect(`/categories`);
   }
 });
 
@@ -84,6 +68,28 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
     const validationMessages = prepareErrors(errors);
     res.render(`sign-up`, {validationMessages});
   }
+});
+
+mainRouter.post(`/login`, async (req, res) => {
+  try {
+    const user = await api.auth(
+        req.body.email,
+        req.body.password
+    );
+    req.session.user = user;
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
+  } catch (errors) {
+    const validationMessages = prepareErrors(errors);
+    const {user} = req.session;
+    res.render(`login`, {user, validationMessages});
+  }
+});
+
+mainRouter.get(`/logout`, (req, res) => {
+  delete req.session.user;
+  res.redirect(`/`);
 });
 
 
