@@ -19,6 +19,7 @@ const {
   MockFile,
   DEFAULT_COUNT,
   MAX_COMMENTS,
+  Roles,
 } = require(`../../constants`);
 
 const readContent = async (filePath) => {
@@ -82,11 +83,12 @@ module.exports = {
 
     const users = [
       {
-        email: `ivanov@example.com`,
+        email: `diselmxxx@gmail.com`,
         firstname: `Иван`,
         lastname: `Иванов`,
-        password: await passwordUtils.hash(`ivanov`),
+        password: await passwordUtils.hash(`123456`),
         avatar: `'avatar1.jpg`,
+        role: Roles[0],
       },
       {
         email: `petrov@example.com`,

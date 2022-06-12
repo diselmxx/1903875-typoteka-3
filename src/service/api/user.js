@@ -42,7 +42,6 @@ module.exports = (app, service) => {
         password,
         user.password
     );
-    console.log(password, user.password, passwordIsCorrect);
     if (passwordIsCorrect) {
       delete user.password;
       res.status(HttpCode.OK).json(user);
