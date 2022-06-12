@@ -1,6 +1,7 @@
 "use strict";
 
-const {DataTypes, Model} = require(`sequelize`);
+const {DataTypes, ENUM, Model} = require(`sequelize`);
+const {Roles} = require(`../../constants`);
 
 class User extends Model {}
 const define = (sequelize) =>
@@ -26,6 +27,11 @@ const define = (sequelize) =>
         avatar: {
           type: DataTypes.STRING,
           allowNull: true,
+        },
+        role: {
+          type: ENUM,
+          values: Roles,
+          defaultValue: `reader`,
         },
       },
       {

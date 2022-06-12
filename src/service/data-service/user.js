@@ -7,7 +7,6 @@ class UserService {
 
   async create(userData) {
     const user = await this._User.create(userData);
-    console.log(userData);
     return user.get();
   }
 

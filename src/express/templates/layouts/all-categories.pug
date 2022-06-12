@@ -12,7 +12,7 @@ block content
       ul.category__list
         each category of categories
           li.category__list-item
-            form(action=`/categories/${category.id}` id=`category-form-${category.id}` method="POST")
+            form(action=`/my/categories/${category.id}` id=`category-form-${category.id}` method="POST")
               input(id=`modify-form-category-${category.id}` type='text' name="title" value=`${category.title}`)
               label(for=`modify-form-category-${category.id}`)
                 span.visually-hidden Редактировать категорию
