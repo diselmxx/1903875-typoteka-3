@@ -22,7 +22,14 @@ class API {
     return this._load(`/articles/${id}/comments`);
   }
 
-  search(query) {
+  auth(email, password) {
+    return this._load(`/user/auth`, {
+      method: `POST`,
+      data: {email, password},
+    });
+  }
+
+  async search(query) {
     return this._load(`/search`, {params: query});
   }
 
