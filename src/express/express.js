@@ -31,8 +31,6 @@ const app = express();
 
 sequelize.sync({force: false});
 
-app.use(express.urlencoded({extended: false}));
-
 app.use(
     session({
       secret: SESSION_SECRET,
