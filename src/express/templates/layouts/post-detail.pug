@@ -12,7 +12,7 @@ block content
         h2.visually-hidden Основное содержание
         .post__wrapper
           .post__head
-            a.post__backwards.button.button--backwards(href='#') Назад
+            button.post__backwards.button.button--backwards(href='#' onclick="history.back()") Назад
             time.post__date(datetime='2019-03-21T20:33') #{formatDate(article.createdAt)}
             h2.post__title.title.title--main #{article.title}
             ul.post__themes.themes
@@ -44,11 +44,11 @@ block content
             each comment of comments
               li.comments__comment
                 .comments__avatar.avatar
-                  img(src='/img/avatar-1.png' alt='аватар пользователя')
+                  img(src=`/img/${comment["users.avatar"]}` alt='аватар пользователя')
                 .comments__text
                   .comments__head
-                    p Admin •
-                    time.comments__date(datetime=`${comment.createdDate}`) #{comment.createdDate}
+                    p #{comment["users.firstname"]}
+                    time.comments__date(datetime=`${comment.createdAt}`) #{comment.createdAt}
                   p.comments__message #{comment.text}
           if user
             .comments__footer.comments__footer--user
