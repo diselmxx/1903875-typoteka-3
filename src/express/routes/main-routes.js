@@ -8,33 +8,40 @@ const {prepareErrors} = require(`../utils`);
 const api = getAPI();
 const ARTICLES_PER_PAGE = 8;
 
-// mainRouter.get(`/`, async (req, res) => {
-//   const [articles, categories] = await Promise.all([
-//     api.getArticles(),
-//     api.getCategories(true),
-//   ]);
-//   res.render(`main`, {articles, categories});
-// });
-
 mainRouter.get(`/`, async (req, res) => {
   let {page = 1} = req.query;
   const {user} = req.session;
   page = +page;
-
   const limit = ARTICLES_PER_PAGE;
-
   const offset = (page - 1) * ARTICLES_PER_PAGE;
-  const [{count, articles}, categories] = await Promise.all([
-    api.getArticles({limit, offset}),
-    api.getCategories(true),
-  ]);
 
+  const [{count, articles, popular, lastComments}, categories] =
+    await Promise.all([
+      api.getArticles({limit, offset}),
+      api.getCategories(true)
+    ]);
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
-  res.render(`main`, {articles, page, totalPages, categories, user});
+  res.render(`main`, {
+    articles,
+    page,
+    totalPages,
+    categories,
+    user,
+    popular,
+    lastComments,
+  });
 });
 
-mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
-mainRouter.get(`/login`, (req, res) => res.render(`login`));
+mainRouter.get(`/register`, (req, res) => {
+  const isRegisterPage = true;
+  res.render(`sign-up`, {isRegisterPage});
+});
+
+mainRouter.get(`/login`, (req, res) => {
+  const isLoginPage = true;
+  res.render(`login`, {isLoginPage});
+});
+
 mainRouter.get(`/search`, async (req, res) => {
   const {user} = req.session;
   if (req.query.constructor === Object && Object.keys(req.query).length === 0) {
