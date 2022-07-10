@@ -16,14 +16,26 @@ module.exports = (app, ArticleService, CommentService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const {offset, limit, comments} = req.query;
-    let result;
-    if (limit || offset) {
-      result = await ArticleService.findPage({limit, offset});
-    } else {
-      result = await ArticleService.findAll(comments);
-    }
-    res.status(HttpCode.OK).json(result);
+    const {offset, limit} = req.query;
+    const needComments = true;
+    let [articles, allArticles, allComments] = await Promise.all([
+      ArticleService.findPage({limit, offset}),
+      ArticleService.findAll(needComments),
+      CommentService.findAll()
+    ]);
+
+    allArticles.sort((a, b) => b.comments.length - a.comments.length);
+    const sliceArticles = allArticles.slice(0, 4);
+    const filterArticles = sliceArticles.filter(
+        (article) => !!article.comments.length
+    );
+    const sliceComments = allComments.slice(0, 4);
+    const popular = filterArticles || [];
+    const lastComments = sliceComments || [];
+    allComments = allComments || [];
+    res
+      .status(HttpCode.OK)
+      .json({...articles, popular, lastComments, allComments});
   });
 
   route.get(`/:articleId`, routeParamsValidator, articleExist(ArticleService), async (req, res) => {
@@ -39,7 +51,7 @@ module.exports = (app, ArticleService, CommentService) => {
       articleExist(ArticleService),
       async (req, res) => {
         const {article} = res.locals;
-        const comments = await CommentService.findAll(article.id);
+        const comments = await CommentService.findByArticleId(article.id);
         return res.status(HttpCode.OK).json(comments);
       }
   );

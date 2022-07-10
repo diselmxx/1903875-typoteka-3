@@ -14,7 +14,7 @@ const ErrorAuthMessage = {
   PASSWORD: `Неверный пароль`,
 };
 
-module.exports = (app, service) => {
+module.exports = (app, service, CommentService) => {
   app.use(`/user`, route);
 
   route.post(`/`, userValidator(service), async (req, res) => {
@@ -47,6 +47,18 @@ module.exports = (app, service) => {
       res.status(HttpCode.OK).json(user);
     } else {
       res.status(HttpCode.UNAUTHORIZED).send(ErrorAuthMessage.PASSWORD);
+    }
+  });
+
+  route.get(`/comments`, async (req, res) => {
+     const { userId } = req.query;
+    try{
+      const comments = await CommentService.findByUserId(userId);
+      return res.status(HttpCode.OK).json(comments);
+    }
+    catch {
+      console.log("User not found")
+       return res.status(HttpCode.BAD_REQUEST);
     }
   });
 };

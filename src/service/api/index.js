@@ -25,7 +25,7 @@ defineModels(sequelize);
   category(app, new CategoryService(sequelize));
   article(app, new ArticleService(sequelize), new CommentService(sequelize));
   search(app, new SearchService(sequelize));
-  user(app, new UserService(sequelize));
+  user(app, new UserService(sequelize), new CommentService(sequelize));
 })();
 
 module.exports = app;
