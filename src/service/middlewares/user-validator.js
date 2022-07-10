@@ -10,7 +10,6 @@ const ErrorRegisterMessage = {
   EMAIL_EXIST: `Электронный адрес уже используется`,
   PASSWORD: `Пароль содержит меньше 6-ти символов`,
   PASSWORD_REPEATED: `Пароли не совпадают`,
-  AVATAR: `Изображение не выбрано или тип изображения не поддерживается`,
 };
 
 const schema = Joi.object({
@@ -43,10 +42,7 @@ const schema = Joi.object({
     .messages({
       "any.only": ErrorRegisterMessage.PASSWORD_REPEATED,
     }),
-  avatar: Joi.string().required().messages({
-    "string.empty": ErrorRegisterMessage.AVATAR,
-  }),
-  // avatar: Joi.string().allow(null, ``),     - optional
+  avatar: Joi.string().allow(null, ``)
 });
 
 module.exports = (service) => async (req, res, next) => {
