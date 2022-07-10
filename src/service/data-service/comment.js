@@ -1,7 +1,10 @@
 "use strict";
 
+const Aliase = require(`../models/aliase`);
+
 class CommentService {
   constructor(sequelize) {
+    this._User = sequelize.models.User;
     this._Offer = sequelize.models.Offer;
     this._Comment = sequelize.models.Comment;
   }
@@ -20,9 +23,38 @@ class CommentService {
     return !!deletedRows;
   }
 
-  findAll(articleId) {
+  findAll() {
+    return this._Comment.findAll({
+      order: [[`createdAt`, `DESC`]],
+      include: [
+        {
+          model: this._User,
+          as: Aliase.USERS,
+          attributes: [`avatar`, `firstname`, `lastname`],
+        },
+      ],
+    });
+  }
+
+  findByArticleId(articleId) {
     return this._Comment.findAll({
       where: {articleId},
+      raw: true,
+      order: [[`createdAt`, `DESC`]],
+      include: [
+        {
+          model: this._User,
+          as: Aliase.USERS,
+          attributes: [`avatar`, `firstname`],
+        },
+      ],
+    });
+  }
+
+  findByUserId(userId) {
+    return this._Comment.findAll({
+      where: {userId},
+      order: [[`createdAt`, `DESC`]],
       raw: true,
     });
   }

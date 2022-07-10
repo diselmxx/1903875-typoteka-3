@@ -2,11 +2,13 @@
 
 const Sequelize = require(`sequelize`);
 const Aliase = require(`../models/aliase`);
+const {Op} = require(`sequelize`);
 
 class CategoryService {
   constructor(sequelize) {
     this._Category = sequelize.models.Category;
     this._ArticleCategory = sequelize.models.ArticleCategory;
+    this._Article = sequelize.models.Article;
   }
 
   async findOne(id) {
@@ -18,19 +20,29 @@ class CategoryService {
       const result = await this._Category.findAll({
         attributes: [`id`, `title`, [Sequelize.fn(`COUNT`, `*`), `count`]],
         group: [Sequelize.col(`Category.id`)],
+        order: [[`createdAt`, `DESC`]],
         include: [
           {
             model: this._ArticleCategory,
             as: Aliase.ARTICLE_CATEGORIES,
             attributes: [],
+            where: {
+              ArticleId: {
+                [Op.ne]: null, // not null
+              },
+            },
           },
         ],
       });
       return result.map((it) => it.get());
     } else {
-      return this._Category.findAll({raw: true});
+      return this._Category.findAll({
+        order: [[`createdAt`, `DESC`]],
+        raw: true,
+      });
     }
   }
+
   async findAllByArticleId(id) {
     return await this._Category.findAll({
       raw: true,
@@ -54,6 +66,12 @@ class CategoryService {
     });
     return !!affectedRows;
   }
+
+  async create(category) {
+    const newCategory = await this._Category.create(category);
+    return newCategory.get();
+  }
+
 }
 
 module.exports = CategoryService;

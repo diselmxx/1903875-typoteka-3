@@ -1,5 +1,6 @@
 "use strict";
 
+const Sequelize = require(`sequelize`);
 const Aliase = require(`../models/aliase`);
 
 class ArticleService {
@@ -47,15 +48,6 @@ class ArticleService {
       include.push({
         model: this._Comment,
         as: Aliase.COMMENTS,
-        include: [
-          {
-            model: this._User,
-            as: Aliase.USERS,
-            attributes: {
-              exclude: [`password`],
-            },
-          },
-        ],
       });
     }
 
@@ -71,7 +63,7 @@ class ArticleService {
     const {count, rows} = await this._Article.findAndCountAll({
       limit,
       offset,
-      include: [Aliase.CATEGORIES],
+      include: [Aliase.CATEGORIES, Aliase.COMMENTS],
       order: [[`createdAt`, `DESC`]],
       distinct: true,
     });
