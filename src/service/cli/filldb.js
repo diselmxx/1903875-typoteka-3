@@ -83,19 +83,20 @@ module.exports = {
 
     const users = [
       {
-        email: `diselmxxx@gmail.com`,
-        firstname: `Иван`,
-        lastname: `Иванов`,
+        email: `author@example.com`,
+        firstname: `Author`,
+        lastname: `A`,
         password: await passwordUtils.hash(`123456`),
-        avatar: `'avatar1.jpg`,
+        avatar: `ma9bRM5r6Z.png`,
         role: Roles[0],
       },
       {
-        email: `petrov@example.com`,
-        firstname: `Пётр`,
-        lastname: `Петров`,
-        password: await passwordUtils.hash(`petrov`),
-        avatar: `'avatar2.jpg`,
+        email: `reader@example.com`,
+        firstname: `Reader`,
+        lastname: `R`,
+        password: await passwordUtils.hash(`123456`),
+        avatar: `9D_JL-Sq7U.png`,
+        role: Roles[2],
       },
     ];
 
