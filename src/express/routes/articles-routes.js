@@ -9,20 +9,28 @@ const {ensureArray, prepareErrors} = require(`../utils`);
 const api = getAPI();
 const csrf = require(`csurf`);
 const csrfProtection = csrf();
+const dayjs = require(`dayjs`);
 
-
-articlesRouter.get(`/category/:id`, (req, res) => {
-  const {user} = req.session;
-  res.render(`articles-by-category`, {user});
+articlesRouter.get(`/category/:id`, (req, res, next) => {
+  try {
+    const {user} = req.session;
+    res.render(`articles-by-category`, {user});
+  } catch (error) {
+    next(error);
+  }
 });
 
-articlesRouter.get(`/add`, auth, csrfProtection, async (req, res) => {
-  const {user} = req.session;
-  if (user && user.role === `author`) {
-    const categories = await api.getCategories();
-    res.render(`post`, {categories, user, csrfToken: req.csrfToken()});
-  } else {
-    res.redirect(`/404`);
+articlesRouter.get(`/add`, auth, csrfProtection, async (req, res, next) => {
+  try {
+    const {user} = req.session;
+    if (user && user.role === `author`) {
+      const categories = await api.getCategories();
+      res.render(`post`, {categories, user, csrfToken: req.csrfToken()});
+    } else {
+      res.redirect(`/404`);
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -84,7 +92,8 @@ articlesRouter.post(
       try {
         await api.createComment({...req.body, userId: user.id}, articleId);
         res.redirect(`back`);
-      } catch (error) {
+      } catch (errors) {
+        // res.cookie(`commentErrors`, prepareErrors(errors));
         res.redirect(`back`);
       }
     }
@@ -97,7 +106,7 @@ articlesRouter.post(
       try {
         await api.deleteComment(articleId, commentId);
         res.redirect(`back`);
-      } catch (error) {
+      } catch (errors) {
         res.redirect(`back`);
       }
     }
@@ -117,15 +126,31 @@ articlesRouter.get(`/edit/:id`, auth, async (req, res) => {
   }
 });
 
-articlesRouter.get(`/:id`, async (req, res) => {
-  const {user} = req.session;
-  const {id} = req.params;
-  const [article, categories, comments] = await Promise.all([
-    api.getArticle(id),
-    api.getCategories(false, id),
-    api.getArticleComments(id)
-  ]);
-  res.render(`post-detail`, {article, categories, comments, user});
+articlesRouter.get(`/:id`, async (req, res, next) => {
+  try {
+    const {user, commentErrors = []} = req.session;
+    const {id} = req.params;
+    const [article, categories, comments] = await Promise.all([
+      api.getArticle(id),
+      api.getCategories(false, id),
+      api.getArticleComments(id),
+    ]);
+    article.createdAt = dayjs(article.createdAt).format(`DD.MM.YYYY`);
+    comments.forEach(
+        (item) =>
+          (item.createdAt = dayjs(item.createdAt).format(`DD.MM.YYYY, hh:mm`))
+    );
+    console.log(commentErrors, `______________________________________________________--`);
+    res.render(`post-detail`, {
+      article,
+      categories,
+      comments,
+      user,
+      commentErrors,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = articlesRouter;

@@ -52,14 +52,12 @@ app.use(express.static(path.resolve(__dirname, StaticFolders.UPLOAD_DIR)));
 app.set(`views`, path.resolve(__dirname, `templates/layouts`));
 app.set(`view engine`, `pug`);
 
-app.use(function (req, res) {
-  if (res.status(404)) {
-    res.render(`404`, {url: req.url});
+app.use((error, req, res, next) => {
+  if (error.response && error.response.status !== 404) {
+    return res.status(error.response.status).render(`500`, {url: req.url});
   }
-  if (res.status(500)) {
-    res.render(`500`, {url: req.url});
-  }
-
+  res.status(404).render(`404`, {url: req.url});
+  return next();
 });
 
 app.listen(DEFAULT_PORT);

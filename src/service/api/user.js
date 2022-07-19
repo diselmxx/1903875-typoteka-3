@@ -58,7 +58,7 @@ module.exports = (app, service, CommentService) => {
     }
     catch {
       console.log("User not found")
-       return res.status(HttpCode.BAD_REQUEST);
+       return res.status(HttpCode.NOT_FOUND);
     }
   });
 };

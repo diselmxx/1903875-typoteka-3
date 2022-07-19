@@ -1,10 +1,5 @@
 extends layout.pug
 block content
-  -
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return date.toLocaleString();
-    }
   main
     section.post
       h1.visually-hidden Пост
@@ -13,7 +8,7 @@ block content
         .post__wrapper
           .post__head
             button.post__backwards.button.button--backwards(href='#' onclick="history.back()") Назад
-            time.post__date(datetime='2019-03-21T20:33') #{formatDate(article.createdAt)}
+            time.post__date(datetime=`${article.createdAt}`) #{article.createdAt}
             h2.post__title.title.title--main #{article.title}
             ul.post__themes.themes
               each category of categories
@@ -25,31 +20,25 @@ block content
             .post__picture
               img(src=`/img/${article.picture}` alt=`${article.title}`)
           .post__text
-            h3 Бирюзовое доверие
-            p
-              | У Apple иногда попадаются интерфейсы, за которые создателей хочется сильно
-              | поругать
-              | — к примеру интерфейс
-              | публикации приложения в AppStore, для которого я уже неделю восстановливаю свой аккаунт разработчика.
-            p
-              | Или интерфейс подключения AirPods на макбуке. Чтобы переключить наушники между
-              | телефоном и компьютером,
-              | нужно сначала нажать на значок звука, затем дождаться, когда в списке устройств появятся наушники, потом
-              | нажать на них и дождаться, пока случится вся магия подключения. Иногда по загадочным причинам магия не
-              | случается, и операцию нужно повторить, выполняя все те же клики-ожидания-клики — бесит.
+            h3 #{article.title}
+            p #{article.announce}
+            p #{article.fullText}
       .post__wrapper.post__wrapper--comments
         section.post__comments.comments
-          h2.comments__title.title.title--middle Комментарии
-          ul.comments__list
-            each comment of comments
-              li.comments__comment
-                .comments__avatar.avatar
-                  img(src=`/img/${comment["users.avatar"]}` alt='аватар пользователя')
-                .comments__text
-                  .comments__head
-                    p #{comment["users.firstname"]}
-                    time.comments__date(datetime=`${comment.createdAt}`) #{comment.createdAt}
-                  p.comments__message #{comment.text}
+          if comments.length
+            h2.comments__title.title.title--middle Комментарии
+            ul.comments__list
+              each comment of comments
+                li.comments__comment
+                  .comments__avatar.avatar
+                    img(src=`/img/${comment["users.avatar"]}` alt='аватар пользователя')
+                  .comments__text
+                    .comments__head
+                      p #{comment["users.firstname"]}
+                      time.comments__date(datetime=`${comment.createdAt}`) #{comment.createdAt}
+                    p.comments__message #{comment.text}
+          else
+            h2.comments__title.title.title--middle Комментарии отсутсвтуют
           if user
             .comments__footer.comments__footer--user
               form(action=`/articles/${article.id}/comments` method='POST')
@@ -58,3 +47,13 @@ block content
                 label
                   textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
                 button.comments__button.button.button--colored(type='submit') Опубликовать
+          else
+            .comments__footer.comments__footer--visitor
+              a.comments__button.button.button--colored(href='/login') Войти
+              .comments__registration
+                p.text.text--signature
+                  b.title.title--small Регистрация
+                  | Чтобы присоединиться к
+                  |                   переписке
+                  |                   нужно
+                  a(href='/register') зарегистрироваться

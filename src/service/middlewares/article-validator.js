@@ -52,7 +52,7 @@ module.exports = (req, res, next) => {
   if (error) {
     console.log(error);
     return res
-      .status(HttpCode.BAD_REQUEST)
+      .status(HttpCode.NOT_FOUND)
       .send(error.details.map((err) => err.message).join(`\n`));
   }
 

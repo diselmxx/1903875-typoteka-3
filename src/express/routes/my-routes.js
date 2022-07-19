@@ -9,36 +9,44 @@ const api = getAPI();
 const ARTICLES_PER_PAGE = 8;
 
 
-myRouter.get(`/`, auth, async (req, res) => {
-  const {user} = req.session;
-  let {page = 1} = req.query;
-  page = +page;
-  const limit = ARTICLES_PER_PAGE;
-  const offset = (page - 1) * ARTICLES_PER_PAGE;
-  const [{count, articles}] = await Promise.all([
-    api.getArticles({limit, offset})
-  ]);
-  const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
-  res.render(`my`, {
-    wrapperClass: `wrapper wrapper--nobackground`,
-    articles,
-    page,
-    totalPages,
-    user
-  });
-});
-
-myRouter.get(`/categories`, async (req, res) => {
-  const {user} = req.session;
-  if (user && user.role === `author`) {
-    const categories = await api.getCategories();
-    res.render(`all-categories`, {
-      categories,
+myRouter.get(`/`, auth, async (req, res, next) => {
+  try {
+    const {user} = req.session;
+    let {page = 1} = req.query;
+    page = +page;
+    const limit = ARTICLES_PER_PAGE;
+    const offset = (page - 1) * ARTICLES_PER_PAGE;
+    const [{count, articles}] = await Promise.all([
+      api.getArticles({limit, offset}),
+    ]);
+    const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
+    res.render(`my`, {
       wrapperClass: `wrapper wrapper--nobackground`,
+      articles,
+      page,
+      totalPages,
       user,
     });
-  } else {
-    res.redirect(`/404`);
+  } catch (error) {
+    next(error);
+  }
+});
+
+myRouter.get(`/categories`, async (req, res, next) => {
+  try {
+    const {user} = req.session;
+    if (user && user.role === `author`) {
+      const categories = await api.getCategories();
+      res.render(`all-categories`, {
+        categories,
+        wrapperClass: `wrapper wrapper--nobackground`,
+        user,
+      });
+    } else {
+      res.redirect(`/404`);
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -70,24 +78,27 @@ myRouter.post(`/categories`, async (req, res) => {
   }
 });
 
-myRouter.get(`/comments`, auth, async (req, res) => {
-  const {user} = req.session;
+myRouter.get(`/comments`, auth, async (req, res, next) => {
+  try {
+    const {user} = req.session;
 
-  if (user && user.role === `author`) {
-    try {
-      const comments = await api.getUserComments(user.id);
-      res.render(`comments`, {
-        comments,
-        wrapperClass: `wrapper wrapper--nobackground`,
-        user
-      });
-    } catch (error) {
+    if (user && user.role === `author`) {
+      try {
+        const comments = await api.getUserComments(user.id);
+        res.render(`comments`, {
+          comments,
+          wrapperClass: `wrapper wrapper--nobackground`,
+          user,
+        });
+      } catch (error) {
+        res.redirect(`/404`);
+      }
+    } else {
       res.redirect(`/404`);
     }
-  } else {
-    res.redirect(`/404`);
+  } catch (error) {
+    next(error);
   }
-
 });
 
 module.exports = myRouter;

@@ -18,7 +18,7 @@ module.exports = (app, ArticleService, CommentService) => {
   route.get(`/`, async (req, res) => {
     const {offset, limit} = req.query;
     const needComments = true;
-    let [articles, allArticles, allComments] = await Promise.all([
+    let [{count, articles}, allArticles, allComments] = await Promise.all([
       ArticleService.findPage({limit, offset}),
       ArticleService.findAll(needComments),
       CommentService.findAll()
@@ -35,7 +35,7 @@ module.exports = (app, ArticleService, CommentService) => {
     allComments = allComments || [];
     res
       .status(HttpCode.OK)
-      .json({...articles, popular, lastComments, allComments});
+      .json({count, articles, popular, lastComments, allComments});
   });
 
   route.get(`/:articleId`, routeParamsValidator, articleExist(ArticleService), async (req, res) => {
