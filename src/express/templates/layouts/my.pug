@@ -6,9 +6,9 @@ block content
       ul.notes__list
         each article of articles
           li.notes__list-item
-            time.notes__item-time(datetime=`${article.createdDate}`) #{article.createdDate}
+            time.notes__item-time(datetime=`${article.createdAt}`) #{article.createdAt}
             a.notes__item-text(href=`/articles/${article.id}`) #{article.title}
             form(action=`/articles/${article.id}` method="POST" )
               button.notes__button.button.button--close-item(type='submit')
               span.visually-hidden Закрыть строку списка
-
+  +pagination(page, totalPages, 2, `?`)

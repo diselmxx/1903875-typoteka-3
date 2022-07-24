@@ -70,6 +70,27 @@ class ArticleService {
     return {count, articles: rows};
   }
 
+  async findPopular() {
+    const article = await this._Article.findAll({
+      attributes: {
+        include: [
+          [
+            Sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM comments
+                    WHERE "comments"."articleId" = "Article"."id"
+                )`),
+            `commentscount`,
+          ],
+        ],
+      },
+      order: [[Sequelize.literal(`commentscount`), `DESC`]],
+      limit: 4
+    });
+
+    return article.map((item) => item.get());
+  }
+
 }
 
 module.exports = ArticleService;

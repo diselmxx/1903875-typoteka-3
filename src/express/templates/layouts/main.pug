@@ -28,7 +28,7 @@ block content
               each popularArticle of popular
                 li.hot__list-item
                   a.hot__list-link(href=`/articles/${popularArticle.id}`) #{popularArticle.announce.length > 100 ? popularArticle.announce.slice(0,100) + '...' :  popularArticle.announce}
-                    sup.hot__link-sup #{popularArticle.comments.length}
+                    sup.hot__link-sup #{popularArticle.commentscount}
         section.main-page__last.last
           h2.last__name
             | Последние комментарии

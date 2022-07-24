@@ -5,11 +5,10 @@ const articlesRouter = new Router();
 const {getAPI} = require(`../api`);
 const {upload} = require(`../multer`);
 const auth = require(`../middlewares/auth`);
-const {ensureArray, prepareErrors} = require(`../utils`);
+const {ensureArray, prepareErrors, formatDate} = require(`../utils`);
 const api = getAPI();
 const csrf = require(`csurf`);
 const csrfProtection = csrf();
-const dayjs = require(`dayjs`);
 
 articlesRouter.get(`/category/:id`, (req, res, next) => {
   try {
@@ -135,12 +134,8 @@ articlesRouter.get(`/:id`, async (req, res, next) => {
       api.getCategories(false, id),
       api.getArticleComments(id),
     ]);
-    article.createdAt = dayjs(article.createdAt).format(`DD.MM.YYYY`);
-    comments.forEach(
-        (item) =>
-          (item.createdAt = dayjs(item.createdAt).format(`DD.MM.YYYY, hh:mm`))
-    );
-    console.log(commentErrors, `______________________________________________________--`);
+    formatDate(article);
+    formatDate(comments, `DD.MM.YYYY, hh:mm`);
     res.render(`post-detail`, {
       article,
       categories,

@@ -4,11 +4,9 @@ const {Router} = require(`express`);
 const mainRouter = new Router();
 const {getAPI} = require(`../api`);
 const {upload} = require(`../middlewares/upload`);
-const {prepareErrors} = require(`../utils`);
+const {prepareErrors, formatDate} = require(`../utils`);
 const api = getAPI();
 const ARTICLES_PER_PAGE = 8;
-const dayjs = require(`dayjs`);
-const article = require(`../../service/api/article`);
 
 mainRouter.get(`/`, async (req, res) => {
   let {page = 1} = req.query;
@@ -22,12 +20,8 @@ mainRouter.get(`/`, async (req, res) => {
       api.getArticles({limit, offset}),
       api.getCategories(true)
     ]);
-
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
-
-  articles.forEach(
-      (item) => (item.createdAt = dayjs(article.createdAt).format(`DD.MM.YYYY`))
-  );
+  formatDate(articles);
 
   res.render(`main`, {
     articles,
@@ -68,6 +62,7 @@ mainRouter.get(`/search`, async (req, res, next) => {
       res.render(`search`, {wrapperClass: `wrapper-color`});
     } else {
       const results = await api.search(req.query);
+      formatDate(results);
       res.render(`search`, {
         results,
         wrapperClass: `wrapper-color`,

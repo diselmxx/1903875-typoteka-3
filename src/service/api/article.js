@@ -17,25 +17,14 @@ module.exports = (app, ArticleService, CommentService) => {
 
   route.get(`/`, async (req, res) => {
     const {offset, limit} = req.query;
-    const needComments = true;
-    let [{count, articles}, allArticles, allComments] = await Promise.all([
+    let [{count, articles}, lastComments, popular] = await Promise.all([
       ArticleService.findPage({limit, offset}),
-      ArticleService.findAll(needComments),
-      CommentService.findAll()
+      CommentService.findLast(),
+      ArticleService.findPopular(),
     ]);
-
-    allArticles.sort((a, b) => b.comments.length - a.comments.length);
-    const sliceArticles = allArticles.slice(0, 4);
-    const filterArticles = sliceArticles.filter(
-        (article) => !!article.comments.length
-    );
-    const sliceComments = allComments.slice(0, 4);
-    const popular = filterArticles || [];
-    const lastComments = sliceComments || [];
-    allComments = allComments || [];
     res
       .status(HttpCode.OK)
-      .json({count, articles, popular, lastComments, allComments});
+      .json({count, articles, popular, lastComments});
   });
 
   route.get(`/:articleId`, routeParamsValidator, articleExist(ArticleService), async (req, res) => {

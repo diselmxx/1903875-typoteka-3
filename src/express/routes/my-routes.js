@@ -3,7 +3,7 @@
 const {Router} = require(`express`);
 const {getAPI} = require(`../api`);
 const auth = require(`../middlewares/auth`);
-const {prepareErrors} = require(`../utils`);
+const {prepareErrors, formatDate} = require(`../utils`);
 const myRouter = new Router();
 const api = getAPI();
 const ARTICLES_PER_PAGE = 8;
@@ -20,6 +20,7 @@ myRouter.get(`/`, auth, async (req, res, next) => {
       api.getArticles({limit, offset}),
     ]);
     const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
+    formatDate(articles);
     res.render(`my`, {
       wrapperClass: `wrapper wrapper--nobackground`,
       articles,

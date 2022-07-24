@@ -62,6 +62,20 @@ class CommentService {
   findOne(id) {
     return this._Comment.findByPk(id);
   }
+
+  findLast() {
+    return this._Comment.findAll({
+      order: [[`createdAt`, `DESC`]],
+      include: [
+        {
+          model: this._User,
+          as: Aliase.USERS,
+          attributes: [`avatar`, `firstname`, `lastname`],
+        },
+      ],
+      limit: 4,
+    });
+  }
 }
 
 module.exports = CommentService;
