@@ -5,7 +5,7 @@ const Aliase = require(`../models/aliase`);
 class CommentService {
   constructor(sequelize) {
     this._User = sequelize.models.User;
-    this._Offer = sequelize.models.Offer;
+    this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
   }
 
@@ -56,6 +56,13 @@ class CommentService {
       where: {userId},
       order: [[`createdAt`, `DESC`]],
       raw: true,
+      include: [
+        {
+          model: this._Article,
+          as: Aliase.ARTICLES,
+          attributes: [`title`],
+        },
+      ],
     });
   }
 

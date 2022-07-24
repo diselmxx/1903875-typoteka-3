@@ -11,8 +11,7 @@ block content
               b.publication__list-name #{user.firstname}
               time.publication__item-time(datetime=`${comment.createdAt}`) #{comment.createdAt}
             a.publication__item-text(href=`/articles/${comment.articleId}`) #{comment.text}
-            p.publication__text-strong
-              | «Яндекс.Метрика» запустила бесплатный сервис для оценки эффективности баннеров и видеорекламы в реальном времени
+            a.publication__text-strong(href=`/articles/${comment.articleId}`) #{comment["articles.title"]}
             form(action=`/articles/${comment.articleId}/comments/${comment.id}` method="POST" )
               button.publication__button.button.button--close-item.button-delete-comment(type='submit')
               span.visually-hidden Закрыть строку списка

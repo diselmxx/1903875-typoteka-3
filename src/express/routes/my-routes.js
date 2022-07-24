@@ -86,6 +86,7 @@ myRouter.get(`/comments`, auth, async (req, res, next) => {
     if (user && user.role === `author`) {
       try {
         const comments = await api.getUserComments(user.id);
+        formatDate(comments, `DD.MM.YYYY, hh:mm`);
         res.render(`comments`, {
           comments,
           wrapperClass: `wrapper wrapper--nobackground`,
