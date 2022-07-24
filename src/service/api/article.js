@@ -29,10 +29,25 @@ module.exports = (app, ArticleService, CommentService) => {
 
   route.get(`/:articleId`, routeParamsValidator, articleExist(ArticleService), async (req, res) => {
     const {article} = res.locals;
-    const {categories} = req.query;
-    const reqArticle = await ArticleService.findOne(article.id, categories);
+    // const {categories} = req.query;
+    // const reqArticle = await ArticleService.findOne(article.id, categories);
+    const reqArticle = await ArticleService.findOne(article.id);
     res.status(HttpCode.OK).json(reqArticle);
   });
+
+  route.get(
+      `/category/:categoryId`,
+      routeParamsValidator,
+      async (req, res) => {
+        const {offset, limit} = req.query;
+        const {categoryId} = req.params;
+        const {count, articles} = await ArticleService.findPage(
+            {limit, offset},
+            categoryId
+        );
+        res.status(HttpCode.OK).json({count, articles});
+      }
+  );
 
   route.get(
       `/:articleId/comments`,

@@ -6,7 +6,8 @@ const {HttpCode} = require(`../../constants`);
 const route = new Router();
 const {
   categoryExist,
-  categoryValidator
+  categoryValidator,
+  routeParamsValidator,
 } = require(`../middlewares/`);
 
 module.exports = (app, service) => {
@@ -24,6 +25,16 @@ module.exports = (app, service) => {
     const category = await service.create(req.body);
     return res.status(HttpCode.CREATED).json(category);
   });
+
+  route.get(
+      `/:categoryId`,
+      routeParamsValidator,
+      async (req, res) => {
+        const {categoryId} = req.params;
+        const reqCategory = await service.findOne(categoryId);
+        res.status(HttpCode.OK).json(reqCategory);
+      }
+  );
 
 
   route.put(`/:categoryId`, categoryExist(service),

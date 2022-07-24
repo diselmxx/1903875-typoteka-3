@@ -14,6 +14,12 @@ class API {
     return this._load(`/articles`, {params: {offset, limit}});
   }
 
+  getArticlesByCategory({offset, limit}, categoryId) {
+    return this._load(`/articles/category/${categoryId}`, {
+      params: {offset, limit},
+    });
+  }
+
   getArticle(id) {
     return this._load(`/articles/${id}`);
   }
@@ -31,6 +37,10 @@ class API {
       method: `POST`,
       data: {email, password},
     });
+  }
+
+  getCategoryById(categoryId) {
+    return this._load(`/categories/${categoryId}`);
   }
 
   async search(query) {

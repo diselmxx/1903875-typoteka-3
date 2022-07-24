@@ -1,7 +1,8 @@
 "use strict";
 
-const Sequelize = require(`sequelize`);
+const {Sequelize, Op} = require(`sequelize`);
 const Aliase = require(`../models/aliase`);
+
 
 class ArticleService {
   constructor(sequelize) {
@@ -59,13 +60,30 @@ class ArticleService {
     return article.map((item) => item.get());
   }
 
-  async findPage({limit, offset}) {
+  async findPage({limit, offset}, categoryId) {
+    let where = {};
+    if (categoryId) {
+      where = {
+        id: {
+          [Op.in]: [
+            Sequelize.literal(`(
+                SELECT "ArticleId"
+                FROM article_categories
+                WHERE "article_categories"."CategoryId" = ${categoryId}
+              )`
+            ),
+          ],
+        },
+      };
+    }
+
     const {count, rows} = await this._Article.findAndCountAll({
       limit,
       offset,
       include: [Aliase.CATEGORIES, Aliase.COMMENTS],
       order: [[`createdAt`, `DESC`]],
       distinct: true,
+      where
     });
     return {count, articles: rows};
   }

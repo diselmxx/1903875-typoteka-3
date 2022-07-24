@@ -9,11 +9,35 @@ const {ensureArray, prepareErrors, formatDate} = require(`../utils`);
 const api = getAPI();
 const csrf = require(`csurf`);
 const csrfProtection = csrf();
+const ARTICLES_PER_PAGE = 8;
 
-articlesRouter.get(`/category/:id`, (req, res, next) => {
+articlesRouter.get(`/category/:id`, async (req, res, next) => {
   try {
+    let {page = 1} = req.query;
     const {user} = req.session;
-    res.render(`articles-by-category`, {user});
+    const {id: currentCategoryId} = req.params;
+    page = +page;
+    const limit = ARTICLES_PER_PAGE;
+    const offset = (page - 1) * ARTICLES_PER_PAGE;
+
+    const [{count, articles}, categories, currentCategory] =
+      await Promise.all([
+        api.getArticlesByCategory({limit, offset}, currentCategoryId),
+        api.getCategories(true),
+        api.getCategoryById(currentCategoryId),
+      ]);
+    const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
+    formatDate(articles);
+    console.log(currentCategory);
+    res.render(`articles-by-category`, {
+      articles,
+      page,
+      totalPages,
+      categories,
+      user,
+      currentCategory,
+      currentCategoryId,
+    });
   } catch (error) {
     next(error);
   }
