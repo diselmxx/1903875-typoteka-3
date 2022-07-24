@@ -68,6 +68,7 @@ articlesRouter.post(`/add`, auth, upload.single(`photo`), csrfProtection, async 
     title: body.title,
     categories: ensureArray(body.categories),
     userId: user.id,
+    createdAt: body.createdAt
   };
 
   try {
@@ -97,6 +98,7 @@ articlesRouter.post(`/:id`, auth, upload.single(`photo`), async (req, res) => {
     title: body.title,
     categories: ensureArray(body.categories),
     userId: user.id,
+    createdAt: body.createdAt,
   };
 
   try {

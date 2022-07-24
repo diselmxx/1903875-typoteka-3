@@ -43,6 +43,9 @@ const schema = Joi.object({
   userId: Joi.number().integer().positive().required().messages({
     "number.base": ErrorArticleMessage.USER_ID,
   }),
+  createdAt: Joi.string().min(5).max(1000).required().messages({
+    "string.empty": `Дата должна быть выбрана`,
+  }),
 });
 
 module.exports = (req, res, next) => {
