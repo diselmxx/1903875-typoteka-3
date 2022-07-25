@@ -137,6 +137,16 @@ articlesRouter.post(
     }
 );
 
+articlesRouter.post(`/delete/:articleId`, async (req, res) => {
+  const {articleId} = req.params;
+  try {
+    await api.deleteArticle(articleId);
+    res.redirect(`back`);
+  } catch (errors) {
+    res.redirect(`back`);
+  }
+});
+
 articlesRouter.get(`/edit/:id`, auth, async (req, res) => {
   const {user} = req.session;
   if (user && user.role === `author`) {
