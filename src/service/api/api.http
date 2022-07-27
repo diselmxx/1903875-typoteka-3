@@ -3,6 +3,12 @@ GET http://localhost:3000/api/categories HTTP/1.1
 
 ###
 
+# удаляет определённую категорию
+DELETE   http://localhost:3000/api/categories/16 HTTP/1.1
+Content-Type: application/json
+
+###
+
 # возвращает список публикаций
 GET http://localhost:3000/api/articles HTTP/1.1
 

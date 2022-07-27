@@ -44,4 +44,15 @@ module.exports = (app, service) => {
         return res.status(HttpCode.OK).json(updatedCategory);
       }
   );
+
+  route.delete(
+      `/:categoryId`,
+      routeParamsValidator,
+      categoryExist(service),
+      async (req, res) => {
+        const {category} = res.locals;
+        service.drop(category.id);
+        return res.status(HttpCode.OK).send(category);
+      }
+  );
 };

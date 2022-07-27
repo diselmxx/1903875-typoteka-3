@@ -72,6 +72,19 @@ class CategoryService {
     return newCategory.get();
   }
 
+  async drop(id) {
+
+    const relatedArticles = await this._ArticleCategory.findAll({where: {CategoryId: id}});
+
+    if (relatedArticles.length === 0) {
+      const deletedRows = await this._Category.destroy({
+        where: {id},
+      });
+      return !!deletedRows;
+    }
+
+    return false;
+  }
 }
 
 module.exports = CategoryService;
