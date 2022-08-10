@@ -84,6 +84,12 @@ class API {
     });
   }
 
+  async deleteCategory(categoryId) {
+    return await this._load(`/categories/${categoryId}`, {
+      method: `DELETE`,
+    });
+  }
+
   async updateArticle(data, id) {
     const url = `/articles/${id}`;
     return await this._load(url, {

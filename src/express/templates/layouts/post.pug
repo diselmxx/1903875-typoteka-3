@@ -7,15 +7,22 @@ block content
           form(action=article ? `/articles/${article.id}` :"/articles/add" method="POST" enctype="multipart/form-data")
             input(type="hidden" name="_csrf" value=csrfToken)
             .new-publication__header
-              h1 Новая публикация
-              .new-publication__date-form
-                h3 Дата публикации
-                .new-publication__date-form-division
-                  .new-publication__date-block
-                    label(for='new-publication-date' aria-label='Календарь')
-                    input#new-publication-date(type='text' name='createdAt' placeholder='2019-03-21')
+              if article
+                h1 Редактирование
+              else
+                h1 Новая публикация
+              if !article
+                .new-publication__date-form
+                  h3 Дата публикации
+                  .new-publication__date-form-division
+                    .new-publication__date-block
+                      label(for='new-publication-date' aria-label='Календарь')
+                      input#new-publication-date(type='text' name='createdAt' placeholder='2019-03-21')
               +insertErrorMessage(validationMessages)
-              button.new-publication__button.button.button--colored(type='submit') Опубликовать
+              if article
+                button.new-publication__button.button.button--colored(type='submit') Сохранить
+              else
+                button.new-publication__button.button.button--colored(type='submit') Опубликовать
             a.popup__button.button.button--popup-close(href="/" aria-label='Закрыть окно')
               | Закрыть
               | окно

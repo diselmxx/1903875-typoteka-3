@@ -16,8 +16,12 @@ block content
         each category of categories
           li.category__list-item
             form(action=`/my/categories/${category.id}` id=`category-form-${category.id}` method="POST")
-              input(id=`modify-form-category-${category.id}` type='text' name="title" value=`${category.title}`)
+              div(style="flex: 1 1 auto")
+                input(id=`modify-form-category-${category.id}` type='text' name="title" value=`${category.title}`)
+                if deleteError && +deletedCategoryId === +category.id
+                  p(style="padding: 10px 0").form__error-message= deleteError
               label(for=`modify-form-category-${category.id}`)
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить
+            form(action=`/my/categories/delete/${category.id}` id=`category-form-delete-${category.id}` method="POST" style="flex: 1 0 0px")
               button.category__button.button.button--category(type='submit') Удалить

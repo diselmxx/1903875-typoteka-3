@@ -118,7 +118,8 @@ articlesRouter.post(
         await api.createComment({...req.body, userId: user.id}, articleId);
         res.redirect(`back`);
       } catch (errors) {
-        // res.cookie(`commentErrors`, prepareErrors(errors));
+        req.session.commentErrors = prepareErrors(errors);
+        req.session.save();
         res.redirect(`back`);
       }
     }
@@ -163,7 +164,9 @@ articlesRouter.get(`/edit/:id`, auth, async (req, res) => {
 
 articlesRouter.get(`/:id`, async (req, res, next) => {
   try {
-    const {user, commentErrors = []} = req.session;
+    const {user, commentErrors} = req.session;
+    req.session.commentErrors = false;
+    req.session.save();
     const {id} = req.params;
     const [article, categories, comments] = await Promise.all([
       api.getArticle(id),
@@ -179,6 +182,7 @@ articlesRouter.get(`/:id`, async (req, res, next) => {
       user,
       commentErrors,
     });
+
   } catch (error) {
     next(error);
   }

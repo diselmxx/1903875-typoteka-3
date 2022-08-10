@@ -11,6 +11,7 @@ const schema = Joi.object({
   title: Joi.string().min(5).max(30).required().messages({
     "string.min": ErrorCategoryMessage.TEXT,
     "string.max": ErrorCategoryMessage.TEXT,
+    "string.empty": `Название категории не может быть пустым`,
   }),
 });
 

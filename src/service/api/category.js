@@ -51,8 +51,14 @@ module.exports = (app, service) => {
       categoryExist(service),
       async (req, res) => {
         const {category} = res.locals;
-        service.drop(category.id);
-        return res.status(HttpCode.OK).send(category);
+        const response = await service.drop(category.id);
+        return response
+          ? res.status(HttpCode.OK).send(category)
+          : res
+              .status(HttpCode.NOT_FOUND)
+              .send(
+                  `Категория не может быть удалена, так привязана как минимум к одной статье`
+              );
       }
   );
 };

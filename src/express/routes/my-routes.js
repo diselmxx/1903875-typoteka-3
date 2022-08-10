@@ -79,6 +79,26 @@ myRouter.post(`/categories`, async (req, res) => {
   }
 });
 
+myRouter.post(`/categories/delete/:categoryId`, async (req, res) => {
+  const {user} = req.session;
+  const {categoryId} = req.params;
+  try {
+    await api.deleteCategory(categoryId);
+    res.redirect(`/my/categories`);
+  } catch (error) {
+    const deleteError = error.response.data;
+    const deletedCategoryId = categoryId;
+    console.log(deletedCategoryId);
+    const categories = await api.getCategories();
+    res.render(`all-categories`, {
+      categories,
+      deleteError,
+      deletedCategoryId,
+      user,
+    });
+  }
+});
+
 myRouter.get(`/comments`, auth, async (req, res, next) => {
   try {
     const {user} = req.session;
