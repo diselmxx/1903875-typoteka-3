@@ -10,8 +10,14 @@ class API {
     });
   }
 
-  getArticles({offset, limit, comments}) {
-    return this._load(`/articles`, {params: {offset, limit, comments}});
+  getArticles({offset, limit}) {
+    return this._load(`/articles`, {params: {offset, limit}});
+  }
+
+  getArticlesByCategory({offset, limit}, categoryId) {
+    return this._load(`/articles/category/${categoryId}`, {
+      params: {offset, limit},
+    });
   }
 
   getArticle(id) {
@@ -22,11 +28,19 @@ class API {
     return this._load(`/articles/${id}/comments`);
   }
 
+  getUserComments(userId) {
+    return this._load(`/user/comments`, {params: {userId}});
+  }
+
   auth(email, password) {
     return this._load(`/user/auth`, {
       method: `POST`,
       data: {email, password},
     });
+  }
+
+  getCategoryById(categoryId) {
+    return this._load(`/categories/${categoryId}`);
   }
 
   async search(query) {
@@ -58,6 +72,24 @@ class API {
     });
   }
 
+  async deleteComment(articleId, commentId) {
+    return await this._load(`/articles/${articleId}/comments/${commentId}`, {
+      method: `DELETE`,
+    });
+  }
+
+  async deleteArticle(articleId) {
+    return await this._load(`/articles/${articleId}`, {
+      method: `DELETE`,
+    });
+  }
+
+  async deleteCategory(categoryId) {
+    return await this._load(`/categories/${categoryId}`, {
+      method: `DELETE`,
+    });
+  }
+
   async updateArticle(data, id) {
     const url = `/articles/${id}`;
     return await this._load(url, {
@@ -70,6 +102,14 @@ class API {
     const url = `/categories/${id}`;
     return await this._load(url, {
       method: `PUT`,
+      data,
+    });
+  }
+
+  async createCategory(data) {
+    const url = `/categories`;
+    return await this._load(url, {
+      method: `POST`,
       data,
     });
   }

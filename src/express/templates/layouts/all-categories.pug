@@ -4,17 +4,24 @@ block content
     section.main-page__category.category
       h1.category__title Категории
       .category__add-form
-        form(action='#' method='POST')
-          input#add-form-add-category(type='text' name='add-category' placeholder='Новая категория')
+        form(action='/my/categories' method='POST')
+          input#add-form-add-category(type='text' name='title' placeholder='Новая категория')
           label(for='add-form-add-category')
             span.visually-hidden Добавить категорию
           button.category__button.button.button--category(type='submit') Добавить
+      if validationMessages
+        each message of validationMessages
+          p(style="padding: 10px 40px").form__error-message= message
       ul.category__list
         each category of categories
           li.category__list-item
             form(action=`/my/categories/${category.id}` id=`category-form-${category.id}` method="POST")
-              input(id=`modify-form-category-${category.id}` type='text' name="title" value=`${category.title}`)
+              div(style="flex: 1 1 auto")
+                input(id=`modify-form-category-${category.id}` type='text' name="title" value=`${category.title}`)
+                if deleteError && +deletedCategoryId === +category.id
+                  p(style="padding: 10px 0").form__error-message= deleteError
               label(for=`modify-form-category-${category.id}`)
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить
+            form(action=`/my/categories/delete/${category.id}` id=`category-form-delete-${category.id}` method="POST" style="flex: 1 0 0px")
               button.category__button.button.button--category(type='submit') Удалить

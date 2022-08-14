@@ -1,8 +1,11 @@
 "use strict";
 
+const Aliase = require(`../models/aliase`);
+
 class CommentService {
   constructor(sequelize) {
-    this._Offer = sequelize.models.Offer;
+    this._User = sequelize.models.User;
+    this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
   }
 
@@ -20,15 +23,65 @@ class CommentService {
     return !!deletedRows;
   }
 
-  findAll(articleId) {
+  findAll() {
+    return this._Comment.findAll({
+      order: [[`createdAt`, `DESC`]],
+      include: [
+        {
+          model: this._User,
+          as: Aliase.USERS,
+          attributes: [`avatar`, `firstname`, `lastname`],
+        },
+      ],
+    });
+  }
+
+  findByArticleId(articleId) {
     return this._Comment.findAll({
       where: {articleId},
       raw: true,
+      order: [[`createdAt`, `DESC`]],
+      include: [
+        {
+          model: this._User,
+          as: Aliase.USERS,
+          attributes: [`avatar`, `firstname`],
+        },
+      ],
+    });
+  }
+
+  findByUserId(userId) {
+    return this._Comment.findAll({
+      where: {userId},
+      order: [[`createdAt`, `DESC`]],
+      raw: true,
+      include: [
+        {
+          model: this._Article,
+          as: Aliase.ARTICLES,
+          attributes: [`title`],
+        },
+      ],
     });
   }
 
   findOne(id) {
     return this._Comment.findByPk(id);
+  }
+
+  findLast() {
+    return this._Comment.findAll({
+      order: [[`createdAt`, `DESC`]],
+      include: [
+        {
+          model: this._User,
+          as: Aliase.USERS,
+          attributes: [`avatar`, `firstname`, `lastname`],
+        },
+      ],
+      limit: 4,
+    });
   }
 }
 

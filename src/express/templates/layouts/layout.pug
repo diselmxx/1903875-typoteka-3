@@ -28,7 +28,10 @@ mixin pagination(page, totalPages, width, prefix)
           a.pagination__button.button.button--backwards(href=`${prefix}page=${page - 1}` aria-label='Страница назад') Назад
       while i++ < end
         li.pagination__item(class={'pagination__item--active': i === page})
-          a(href=`${prefix}page=${i}`)= i
+          if i === page
+             a(style="cursor:default") #{i}
+          else
+            a(href=`${prefix}page=${i}`)= i
       if end < totalPages
         li
           a.pagination__button.button.button--forward(href=`${prefix}page=${page + 1}` aria-label='Страница вперед') Вперед
@@ -71,6 +74,9 @@ html(lang='ru')
       include ../partials/header.pug
       block content
       include ../partials/footer.pug
+      include ../partials/comment-template.pug
     script(src='/js/vendor.js')
     script(src='/js/main.js')
+    script(src='https://cdn.socket.io/4.5.1/socket.io.js')
+    script(src='/js/socket.js')
 

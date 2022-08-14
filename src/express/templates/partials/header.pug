@@ -3,18 +3,34 @@ header.header
     img.logo__image(src='/img/icons/logo-image-only.svg' alt='логотип Тайпотеки')
     span.logo__name Типотека
   nav.header__nav
-  if user
+  if !user
     ul.header__nav-list
-      li.header__list-item
+      if !isRegisterPage
+        li.header__list-item
+          a(href='/register' class=`${isLoginPage ? 'header__enter':'header__registration'}`) Регистрация
+      if !isLoginPage
+        li.header__list-item
+          a.header__enter(href='/login') Вход с паролем
+  if user && user.role === 'reader'
+    ul.header__nav-list
+      li.header__list-item.header__enter
         p=user.firstname + user.lastname
       li.header__list-item
         a.header__enter(href='/logout') Выйти
     a.header__avatar.avatar(href="#")
       img(src=`/img/${user.avatar}` alt="Аватар пользователя")
-  else
-    ul.header__nav-list
-      li.header__list-item
-        a.header__registration(href='/register') Регистрация
-      li.header__list-item
-        a.header__enter(href='/login') Вход с паролем
+  if user && user.role === 'author'
+    a.button.button--colored.header__button-new(href='/articles/add') Новая запись
+    .header__dropdown
+      a.button.button--burger.header__burger(href='#') Открыть меню
+      ul.navigation.header__navigation
+        li.navigation__item
+          a(href='/my') Мои статьи
+        li.navigation__item
+          a(href='/my/comments') Мои комментарии
+        li.navigation__item
+          a(href='/my/categories') Категории
+        li.navigation__item
+          a(href='/logout') Выйти
   a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
+

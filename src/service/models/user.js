@@ -31,7 +31,7 @@ const define = (sequelize) =>
         role: {
           type: ENUM,
           values: Roles,
-          defaultValue: `reader`,
+          defaultValue: Roles[2],
         },
       },
       {

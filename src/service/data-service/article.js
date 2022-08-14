@@ -1,6 +1,8 @@
 "use strict";
 
+const {Sequelize, Op} = require(`sequelize`);
 const Aliase = require(`../models/aliase`);
+
 
 class ArticleService {
   constructor(sequelize) {
@@ -47,15 +49,6 @@ class ArticleService {
       include.push({
         model: this._Comment,
         as: Aliase.COMMENTS,
-        include: [
-          {
-            model: this._User,
-            as: Aliase.USERS,
-            attributes: {
-              exclude: [`password`],
-            },
-          },
-        ],
       });
     }
 
@@ -67,15 +60,53 @@ class ArticleService {
     return article.map((item) => item.get());
   }
 
-  async findPage({limit, offset}) {
+  async findPage({limit, offset}, categoryId) {
+    let where = {};
+    if (categoryId) {
+      where = {
+        id: {
+          [Op.in]: [
+            Sequelize.literal(`(
+                SELECT "ArticleId"
+                FROM article_categories
+                WHERE "article_categories"."CategoryId" = ${categoryId}
+              )`
+            ),
+          ],
+        },
+      };
+    }
+
     const {count, rows} = await this._Article.findAndCountAll({
       limit,
       offset,
-      include: [Aliase.CATEGORIES],
+      include: [Aliase.CATEGORIES, Aliase.COMMENTS],
       order: [[`createdAt`, `DESC`]],
       distinct: true,
+      where
     });
     return {count, articles: rows};
+  }
+
+  async findPopular() {
+    const article = await this._Article.findAll({
+      attributes: {
+        include: [
+          [
+            Sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM comments
+                    WHERE "comments"."articleId" = "Article"."id"
+                )`),
+            `commentscount`,
+          ],
+        ],
+      },
+      order: [[Sequelize.literal(`commentscount`), `DESC`]],
+      limit: 4
+    });
+
+    return article.map((item) => item.get());
   }
 
 }

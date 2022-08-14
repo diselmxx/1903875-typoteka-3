@@ -16,22 +16,38 @@ module.exports = (app, ArticleService, CommentService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const {offset, limit, comments} = req.query;
-    let result;
-    if (limit || offset) {
-      result = await ArticleService.findPage({limit, offset});
-    } else {
-      result = await ArticleService.findAll(comments);
-    }
-    res.status(HttpCode.OK).json(result);
+    const {offset, limit} = req.query;
+    let [{count, articles}, lastComments, popular] = await Promise.all([
+      ArticleService.findPage({limit, offset}),
+      CommentService.findLast(),
+      ArticleService.findPopular(),
+    ]);
+    res
+      .status(HttpCode.OK)
+      .json({count, articles, popular, lastComments});
   });
 
   route.get(`/:articleId`, routeParamsValidator, articleExist(ArticleService), async (req, res) => {
     const {article} = res.locals;
-    const {categories} = req.query;
-    const reqArticle = await ArticleService.findOne(article.id, categories);
+    // const {categories} = req.query;
+    // const reqArticle = await ArticleService.findOne(article.id, categories);
+    const reqArticle = await ArticleService.findOne(article.id);
     res.status(HttpCode.OK).json(reqArticle);
   });
+
+  route.get(
+      `/category/:categoryId`,
+      routeParamsValidator,
+      async (req, res) => {
+        const {offset, limit} = req.query;
+        const {categoryId} = req.params;
+        const {count, articles} = await ArticleService.findPage(
+            {limit, offset},
+            categoryId
+        );
+        res.status(HttpCode.OK).json({count, articles});
+      }
+  );
 
   route.get(
       `/:articleId/comments`,
@@ -39,7 +55,7 @@ module.exports = (app, ArticleService, CommentService) => {
       articleExist(ArticleService),
       async (req, res) => {
         const {article} = res.locals;
-        const comments = await CommentService.findAll(article.id);
+        const comments = await CommentService.findByArticleId(article.id);
         return res.status(HttpCode.OK).json(comments);
       }
   );
@@ -52,6 +68,9 @@ module.exports = (app, ArticleService, CommentService) => {
       async (req, res) => {
         const {article} = res.locals;
         const newComment = await CommentService.create(article.id, req.body);
+        const lastComment = await CommentService.findLast();
+        const io = req.app.locals.socketio; // Take socket instance from app.locals
+        io.emit(`comment:create`, lastComment[0]); // Notify clients
         return res
         .status(HttpCode.CREATED)
         .json({id: newComment.id, text: newComment.text});

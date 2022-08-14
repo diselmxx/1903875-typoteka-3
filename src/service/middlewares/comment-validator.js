@@ -11,6 +11,7 @@ const ErrorCommentMessage = {
 const schema = Joi.object({
   text: Joi.string().min(20).required().messages({
     "string.min": ErrorCommentMessage.TEXT,
+    "string.empty": `Комментарий не может быть пустым`,
   }),
   userId: Joi.number().integer().positive().required().messages({
     "number.base": ErrorCommentMessage.USER_ID,

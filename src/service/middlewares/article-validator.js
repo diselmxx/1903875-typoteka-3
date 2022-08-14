@@ -43,6 +43,9 @@ const schema = Joi.object({
   userId: Joi.number().integer().positive().required().messages({
     "number.base": ErrorArticleMessage.USER_ID,
   }),
+  createdAt: Joi.string().min(5).max(1000).messages({
+    "string.empty": `Дата должна быть выбрана`,
+  }),
 });
 
 module.exports = (req, res, next) => {
@@ -52,8 +55,8 @@ module.exports = (req, res, next) => {
   if (error) {
     console.log(error);
     return res
-      .status(HttpCode.BAD_REQUEST)
-      .send(error.details.map((err) => err.message).join(`\n`));
+      .status(HttpCode.NOT_FOUND)
+      .send(error.details);
   }
 
   return next();
