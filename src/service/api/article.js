@@ -68,6 +68,8 @@ module.exports = (app, ArticleService, CommentService) => {
       async (req, res) => {
         const {article} = res.locals;
         const newComment = await CommentService.create(article.id, req.body);
+        const io = req.app.locals.socketio; // Take socket instance from app.locals
+        io.emit(`comment:create`, newComment); // Notify clients
         return res
         .status(HttpCode.CREATED)
         .json({id: newComment.id, text: newComment.text});

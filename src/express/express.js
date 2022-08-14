@@ -8,6 +8,7 @@ const DEFAULT_PORT = 8080;
 const session = require(`express-session`);
 const sequelize = require(`../service/lib/sequelize`);
 const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
+const cors = require(`cors`);
 
 const {SESSION_SECRET} = process.env;
 if (!SESSION_SECRET) {
@@ -27,6 +28,7 @@ const mySessionStore = new SequelizeStore({
 });
 
 const app = express();
+app.use(cors());
 
 
 sequelize.sync({force: false});
