@@ -28,7 +28,6 @@ articlesRouter.get(`/category/:id`, async (req, res, next) => {
       ]);
     const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
     formatDate(articles);
-    console.log(currentCategory);
     res.render(`articles-by-category`, {
       articles,
       page,
