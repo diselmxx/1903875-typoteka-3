@@ -88,7 +88,6 @@ myRouter.post(`/categories/delete/:categoryId`, async (req, res) => {
   } catch (error) {
     const deleteError = error.response.data;
     const deletedCategoryId = categoryId;
-    console.log(deletedCategoryId);
     const categories = await api.getCategories();
     res.render(`all-categories`, {
       categories,

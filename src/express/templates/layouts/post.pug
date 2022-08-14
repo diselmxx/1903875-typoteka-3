@@ -18,7 +18,6 @@ block content
                     .new-publication__date-block
                       label(for='new-publication-date' aria-label='Календарь')
                       input#new-publication-date(type='text' name='createdAt' placeholder='2019-03-21')
-              +insertErrorMessage(validationMessages)
               if article
                 button.new-publication__button.button.button--colored(type='submit') Сохранить
               else
@@ -31,6 +30,10 @@ block content
                 .form__field
                   label
                     input(type='text' value=article && article.title name='title' placeholder='Заголовок' required='')
+                    if valErrors
+                      each error of valErrors
+                        if error.path[0] === 'title'
+                          p.form__error-message #{error.message}
                 .form__field.form__field--post-image
                   label
                     input#image-name-field(type='text' name='photo-choose' placeholder='Фотография' value=article && article.picture  readonly='')
@@ -44,10 +47,31 @@ block content
                       input(type='checkbox' checked=category && category.title.includes(category) id=category name="categories[]" value=category.id)
                       label(for=category) #{category.title}
                   a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
+                if valErrors
+                  each error of valErrors
+                    if error.path[0] === 'categories'
+                      p.form__error-message #{error.message}
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
                     textarea(rows='5' name='announce' placeholder='Анонс публикации') #{article && article.announce}
+                  if valErrors
+                    each error of valErrors
+                      if error.path[0] === 'announce'
+                        p.form__error-message #{error.message}
                 .form__field.form__field--publication-text
                   label
                     textarea(rows='10' name='full-text' placeholder='Полный текст публикации') #{article && article.fullText}
+                  if valErrors
+                    each error of valErrors
+                      if error.path[0] === 'fullText'
+                        p.form__error-message #{error.message}
+            if validationMessages
+              .form__validation-error
+                if article
+                  p.form__error-message При обновлении статьи произошли ошибки:
+                else
+                  p.form__error-message При создании статьи произошли ошибки:
+                ul.form__errors
+                  each message of validationMessages
+                    li.form__error= message

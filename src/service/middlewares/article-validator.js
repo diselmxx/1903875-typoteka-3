@@ -56,7 +56,7 @@ module.exports = (req, res, next) => {
     console.log(error);
     return res
       .status(HttpCode.NOT_FOUND)
-      .send(error.details.map((err) => err.message).join(`\n`));
+      .send(error.details);
   }
 
   return next();

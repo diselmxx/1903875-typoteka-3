@@ -75,13 +75,15 @@ articlesRouter.post(`/add`, auth, upload.single(`photo`), csrfProtection, async 
     await api.createArticle(articleData);
     res.redirect(`/my`);
   } catch (errors) {
-    const validationMessages = prepareErrors(errors);
+    const valErrors = errors.response.data;
+    const validationMessages = errors.response.data.map((err) => err.message);
     const categories = await api.getCategories();
     res.render(`post`, {
       categories,
       validationMessages,
       csrfToken: req.csrfToken(),
       user,
+      valErrors,
     });
   }
 
@@ -104,8 +106,22 @@ articlesRouter.post(`/:id`, auth, upload.single(`photo`), async (req, res) => {
   try {
     await api.updateArticle(articleData, id, user);
     res.redirect(`/my`);
-  } catch (error) {
-    res.redirect(`back`);
+  } catch (errors) {
+    const valErrors = errors.response.data;
+    const validationMessages = errors.response.data.map((err) => err.message);
+    if (user && user.role === `author`) {
+      const [article, categories] = await Promise.all([
+        api.getArticle(id),
+        api.getCategories(),
+      ]);
+      res.render(`post`, {
+        article,
+        categories,
+        validationMessages,
+        user,
+        valErrors,
+      });
+    }
   }
 });
 
