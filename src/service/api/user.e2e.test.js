@@ -188,7 +188,7 @@ describe(`API refuses to create user if data is invalid`, () => {
 
   test(`Without any required property response code is 400`, async () => {
     for (const key of Object.keys(validUserData)) {
-      const badUserData = {...validUserData};
+      const badUserData = {};
       delete badUserData[key];
       await request(app)
         .post(`/user`)

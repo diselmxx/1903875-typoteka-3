@@ -155,14 +155,6 @@ describe(`API returns offer based on search query`, () => {
     expect(response.body[0].title).toBe(`Разработка плагина брендирования`));
 });
 
-test(`API returns code 404 if nothing is found`,
-    () => request(app)
-    .get(`/search`)
-    .query({
-      query: `Продам свою душу`
-    })
-    .expect(HttpCode.NOT_FOUND)
-);
 
 test(`API returns 400 when query string is absent`,
     () => request(app)

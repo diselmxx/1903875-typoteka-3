@@ -55,7 +55,7 @@ module.exports = (req, res, next) => {
   if (error) {
     console.log(error);
     return res
-      .status(HttpCode.NOT_FOUND)
+      .status(HttpCode.BAD_REQUEST)
       .send(error.details);
   }
 
